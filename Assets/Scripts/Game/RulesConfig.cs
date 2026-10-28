@@ -20,7 +20,7 @@ namespace DiceThrower.Game
         [Tooltip("Longest preset name. Longer names are cut.")]
         public int presetNameMaxLength = 24;
 
-        [Header("Pinned presets")]
+        [Header("Pinned presets (usage window)")]
         [Tooltip("The chips on the Roll screen are ordered by use in this many of the latest throws.")]
         public int usageWindow = 30;
         [Tooltip("Smallest and largest usage window the Settings tab allows.")]
@@ -28,6 +28,15 @@ namespace DiceThrower.Game
         public int usageWindowMax = 100;
         [Tooltip("How much one press of - or + changes the usage window.")]
         public int usageWindowStep = 5;
+        [Header("Throwing")]
+        [Tooltip("Seconds after a throw before dice that still move are set where they are. The player can change it in Settings.")]
+        public int settleSeconds = 5;
+        [Tooltip("Smallest and largest settle time the Settings tab allows, and the step of - and +.")]
+        public int settleSecondsMin = 2;
+        public int settleSecondsMax = 15;
+        public int settleSecondsStep = 1;
+
+        [Header("Pinned presets")]
         [Tooltip("Most chips shown on the Roll screen.")]
         public int pinnedChipsMax = 6;
 

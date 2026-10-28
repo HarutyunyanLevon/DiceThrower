@@ -5,8 +5,9 @@ using DiceThrower.Core;
 namespace DiceThrower.UI
 {
     /// <summary>
-    /// Writes throws to the history. A throw waits a moment before it is recorded, so quick taps on several dice
-    /// become one entry. Flush records the pending throw now (before a new throw, a tab switch, clear or app pause).
+    /// Writes throws to the history. A throw is recorded a moment after its dice lie still (<see cref="Settled"/> starts that wait),
+    /// so quick taps on several dice become one entry. Flush records the pending throw now (before a tab switch, clear or app pause);
+    /// a throw whose dice still roll stays pending until they settle. Discard drops a throw that is replaced before it finished.
     /// </summary>
     public sealed class HistoryRecorder
     {
@@ -37,26 +38,44 @@ namespace DiceThrower.UI
             if (!_pending) _presetId = presetId;
             _pending = true;
             _unix = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-            if (_timer != null) _timer.Pause();
+            StopTimer(); // waits for the dice to settle
+        }
+
+        /// <summary>All dice lie still: the pending throw is recorded after the short wait.</summary>
+        public void Settled()
+        {
+            if (!_pending) return;
+            StopTimer();
             _timer = _host.schedule.Execute(Flush).StartingIn(UiFactory.Millis(_delaySeconds));
         }
 
-        /// <summary>Records the pending throw (whatever is rolled right now).</summary>
+        /// <summary>Drops the pending throw without recording it.</summary>
+        public void Discard()
+        {
+            _pending = false;
+            _presetId = null;
+            StopTimer();
+        }
+
+        /// <summary>Records the pending throw (whatever is rolled right now), unless its dice are still rolling.</summary>
         public void Flush()
         {
-            if (!_pending) return;
+            if (!_pending || _session.HasPendingResult) return;
             _pending = false;
-            if (_timer != null)
-            {
-                _timer.Pause();
-                _timer = null;
-            }
+            StopTimer();
             ThrowResult result = _session.GetThrow();
             string presetId = _presetId;
             _presetId = null;
             if (result == null) return;
             _data.AddHistory(result, _unix, presetId);
             if (Recorded != null) Recorded();
+        }
+
+        private void StopTimer()
+        {
+            if (_timer == null) return;
+            _timer.Pause();
+            _timer = null;
         }
     }
 }

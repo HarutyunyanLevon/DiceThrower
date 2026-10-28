@@ -32,6 +32,8 @@ namespace DiceThrower.Core
             data.Settings.SkinSet = Math.Max(0, GetInt(settings, "skinSet", data.Settings.SkinSet));
             data.Settings.Theme = Math.Max(0, GetInt(settings, "theme", data.Settings.Theme));
             data.Settings.UsageWindow = Math.Max(0, GetInt(settings, "usageWindow", data.Settings.UsageWindow));
+            data.Settings.PhysicsDice = GetBool(settings, "physicsDice", data.Settings.PhysicsDice);
+            data.Settings.SettleSeconds = Math.Max(0, GetInt(settings, "settleSeconds", data.Settings.SettleSeconds));
 
             foreach (object item in GetList(root, "presets"))
             {
@@ -57,6 +59,8 @@ namespace DiceThrower.Core
                 { "skinSet", data.Settings.SkinSet },
                 { "theme", data.Settings.Theme },
                 { "usageWindow", data.Settings.UsageWindow },
+                { "physicsDice", data.Settings.PhysicsDice },
+                { "settleSeconds", data.Settings.SettleSeconds },
             };
 
             var presets = new List<object>();

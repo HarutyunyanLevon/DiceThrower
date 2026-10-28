@@ -58,6 +58,24 @@
                     <ui:VisualElement class="switch__knob" picking-mode="Ignore" />
                 </ui:VisualElement>
             </ui:VisualElement>
+            <ui:VisualElement name="row-physics" class="setting">
+                <ui:Label text="Physics dice" class="lbl setting__label" />
+                <ui:VisualElement name="switch-physics" class="switch">
+                    <ui:VisualElement class="switch__knob" picking-mode="Ignore" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="row-settle" class="setting">
+                <ui:Label text="Settle time" class="lbl setting__label" />
+                <ui:VisualElement class="stepper">
+                    <ui:VisualElement name="settle-minus" class="stepper__btn">
+                        <ui:Label text="-" class="lbl stepper__sign" picking-mode="Ignore" />
+                    </ui:VisualElement>
+                    <ui:Label name="settle-value" text="" class="lbl setting__value stepper__value" />
+                    <ui:VisualElement name="settle-plus" class="stepper__btn">
+                        <ui:Label text="+" class="lbl stepper__sign" picking-mode="Ignore" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
             <ui:VisualElement name="row-skin" class="setting">
                 <ui:Label text="Dice skin" class="lbl setting__label" />
                 <ui:Label name="skin-value" text="" class="lbl setting__value" />

@@ -45,6 +45,8 @@ namespace DiceThrower.UI
         [Header("Settings texts")]
         [Tooltip("{0} = number of throws")]
         public string usageWindowFormat = "{0} throws";
+        [Tooltip("{0} = seconds")]
+        public string settleSecondsFormat = "{0} s";
 
         [Header("Preset editor and dialog texts")]
         public string cancelText = "Cancel";

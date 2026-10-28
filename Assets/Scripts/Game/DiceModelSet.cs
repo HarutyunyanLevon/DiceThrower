@@ -35,7 +35,7 @@ namespace DiceThrower.Game
     /// <summary>
     /// A set of imported dice (d4 to d20) with several colour variants that share one set of meshes.
     /// The geometry and numbering are baked into a JSON TextAsset (so no mesh read/write flags matter on device);
-    /// each variant is just a material. The d% tens die (00-90) has no model; it is generated from the skin colours.
+    /// each variant is just a material. The d% tens die reuses the d10 mesh and texture; its faces count as 0, 10 .. 90.
     /// </summary>
     [CreateAssetMenu(menuName = "DiceThrower/Dice Model Set", fileName = "DiceModelSet")]
     public sealed class DiceModelSet : ScriptableObject
@@ -53,15 +53,15 @@ namespace DiceThrower.Game
             return variants[Mathf.Clamp(variant, 0, variants.Length - 1)].material;
         }
 
-        /// <summary>The model of a die kind, or null when the set has none (the tens die).</summary>
+        /// <summary>The model of a die kind, or null when the set has none.</summary>
         public ModelDie Solid(DieKind kind)
         {
-            if (kind == DieKind.D10Tens || geometry == null || variants.Length == 0) return null;
+            if (geometry == null || variants.Length == 0) return null;
             ModelDie solid;
             if (_solids.TryGetValue(kind, out solid)) return solid;
 
             if (_parsed == null) _parsed = JsonUtility.FromJson<DiceModelJson>(geometry.text);
-            string wanted = kind == DieKind.D10Units ? DieKind.D10.ToString() : kind.ToString();
+            string wanted = (kind == DieKind.D10Units || kind == DieKind.D10Tens) ? DieKind.D10.ToString() : kind.ToString();
             for (int i = 0; i < _parsed.kinds.Length; i++)
             {
                 if (_parsed.kinds[i].kind != wanted) continue;

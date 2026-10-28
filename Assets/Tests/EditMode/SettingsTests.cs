@@ -44,5 +44,24 @@ namespace DiceThrower.Tests
         {
             Assert.AreEqual(10, new AppSettings { UsageWindow = 10 }.UsageWindowOr(30));
         }
+
+        [Test]
+        public void PhysicsSwitchAndSettleTimeSurviveASaveAndLoad()
+        {
+            AppSettings loaded = RoundTrip(new AppSettings { PhysicsDice = false, SettleSeconds = 8 });
+
+            Assert.IsFalse(loaded.PhysicsDice);
+            Assert.AreEqual(8, loaded.SettleSeconds);
+        }
+
+        [Test]
+        public void AnOldSaveHasPhysicsOnAndUsesTheConfiguredSettleTime()
+        {
+            AppSettings loaded = SaveCodec.Deserialize("{\"version\":1,\"settings\":{\"sound\":false}}").Settings;
+
+            Assert.IsTrue(loaded.PhysicsDice);
+            Assert.AreEqual(5, loaded.SettleSecondsOr(5));
+            Assert.AreEqual(9, new AppSettings { SettleSeconds = 9 }.SettleSecondsOr(5));
+        }
     }
 }

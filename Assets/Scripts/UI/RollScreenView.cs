@@ -52,6 +52,7 @@ namespace DiceThrower.UI
         private HistoryView _history;
         private SettingsView _settings;
         private ThemeApplier _theme;
+        private readonly List<DieReading> _readings = new List<DieReading>();
 
         // ------------------------------------------------------------------ setup
 
@@ -73,6 +74,7 @@ namespace DiceThrower.UI
             DiceLimits limits = rules.ToLimits();
             _session = new RollSession(new SystemRng(), limits);
             LoadData(limits);
+            ApplyThrowSettings();
 
             _root = GetComponent<UIDocument>().rootVisualElement;
             _theme = new ThemeApplier(_root, dataConfig.themes);
@@ -88,7 +90,7 @@ namespace DiceThrower.UI
 
             BuildRollTab(new SliderOverlay(screen, config.sliderTrackPad));
             BuildDataTabs(limits);
-            PressGesture.Tappable(trayArea, ThrowAll); // tapping the tray rethrows everything
+            PressGesture.Tappable(trayArea, OnTrayTap); // while dice roll: set them now; otherwise rethrow everything
 
             _feedback.Bind(_data.Settings);
             _tray.DieHit += _feedback.PlayHit;
@@ -180,7 +182,7 @@ namespace DiceThrower.UI
             _presets = new PresetsView(_root, dataConfig, captions, config.slideThresholdPx, _data, _dialog,
                                        preset => LoadSetup(preset.Sets, preset.Id), EditPreset);
             _history = new HistoryView(_root, dataConfig, captions, config.slideThresholdPx, _data, RethrowEntry);
-            _settings = new SettingsView(_root, dataConfig, rules, _data, _theme, _dialog, OnSkinChanged, _toast.Show);
+            _settings = new SettingsView(_root, dataConfig, rules, _data, _theme, _dialog, OnSkinChanged, ApplyThrowSettings, _toast.Show);
         }
 
         private void SelectTab(int index)
@@ -199,14 +201,35 @@ namespace DiceThrower.UI
 
         private void ThrowAll()
         {
-            _recorder.Flush(); // the previous throw is finished
+            FinishPreviousThrow();
             Apply(_session.ThrowAll());
+        }
+
+        /// <summary>A tap on the tray: dice that still roll are set at once (moving ones go to free spots with a random face); otherwise everything is thrown again.</summary>
+        private void OnTrayTap()
+        {
+            if (_tray.IsRolling) _tray.ForceSettle();
+            else ThrowAll();
+        }
+
+        /// <summary>A new throw replaces the old one: record it if it is done, forget it if its dice were still rolling.</summary>
+        private void FinishPreviousThrow()
+        {
+            _recorder.Flush();
+            _recorder.Discard();
+        }
+
+        /// <summary>Physics switch and settle time from the settings (also called when they change).</summary>
+        private void ApplyThrowSettings()
+        {
+            _session.UsePhysics = _data.Settings.PhysicsDice;
+            _tray.SettleSeconds = Mathf.Clamp(_data.Settings.SettleSecondsOr(rules.settleSeconds), rules.settleSecondsMin, rules.settleSecondsMax);
         }
 
         /// <summary>Loads a saved setup into the Roll tab and throws it. <paramref name="presetId"/> is the preset it came from, or null.</summary>
         private void LoadSetup(IList<RollSetConfig> sets, string presetId)
         {
-            _recorder.Flush();
+            FinishPreviousThrow();
             SelectTab(TabRoll);
             Apply(_session.Load(sets), presetId);
         }
@@ -275,12 +298,32 @@ namespace DiceThrower.UI
                 _recorder.Queue(presetId);
                 _feedback.Play(FeedbackKind.Throw);
             }
+            else if (!change.IsEmpty && _session.UsePhysics && !_tray.IsRolling)
+            {
+                ReadTray(); // dice were only removed: the result is what the dice left show
+                _recorder.Settled();
+            }
             Refresh();
+        }
+
+        /// <summary>Physics: the result is what the dice in the tray show. The losing copy of an advantage / disadvantage throw leaves.</summary>
+        private void ReadTray()
+        {
+            _tray.ReadDice(_readings);
+            _session.Settle(_readings);
+            for (int s = 0; s < RollSession.SetCount; s++)
+            {
+                int lost = _session.TakeDiscard(s);
+                if (lost >= 0) _tray.DiscardPass(s, lost);
+            }
         }
 
         /// <summary>All dice lie still: a different cue for a natural 20 or a natural 1.</summary>
         private void OnSettled()
         {
+            if (_session.UsePhysics) ReadTray();
+            _recorder.Settled();
+            Refresh();
             ThrowResult result = _session.GetThrow();
             FeedbackKind kind = FeedbackKind.Settled;
             if (result != null && result.HasNat20) kind = FeedbackKind.Nat20;

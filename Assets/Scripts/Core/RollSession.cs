@@ -28,7 +28,16 @@ namespace DiceThrower.Core
         public readonly DiceLimits Limits;
 
         private readonly IRng _rng;
-        private readonly PoolRoll[][] _passes = new PoolRoll[SetCount][]; // null = nothing rolled for that set
+        private readonly PoolRoll[][] _passes = new PoolRoll[SetCount][]; // null = no result for that set (nothing thrown, or still rolling)
+        private readonly bool[] _thrown = new bool[SetCount];             // the set has dice in the tray
+        private readonly int[] _discarded = new int[] { -1, -1 };          // advantage pass that lost (physics), or -1
+        private readonly bool[] _discardPending = new bool[SetCount];     // the tray has not been told yet
+
+        /// <summary>
+        /// True: dice are thrown for real and the result is what they show (<see cref="Settle"/> hands the readings in).
+        /// False: the result is decided here (RNG) and the tray only places dice showing it.
+        /// </summary>
+        public bool UsePhysics;
 
         public RollSession(IRng rng, DiceLimits limits)
         {
@@ -36,7 +45,59 @@ namespace DiceThrower.Core
             Limits = limits ?? new DiceLimits();
         }
 
+        /// <summary>The set has a result (not while its dice are still rolling).</summary>
         public bool HasRoll(int set) { return _passes[set] != null; }
+
+        /// <summary>Some set has dice in the tray that have not settled yet, so it has no result.</summary>
+        public bool HasPendingResult
+        {
+            get
+            {
+                for (int s = 0; s < SetCount; s++) if (_thrown[s] && _passes[s] == null) return true;
+                return false;
+            }
+        }
+
+        /// <summary>The set has dice in the tray, settled or not.</summary>
+        public bool HasThrown(int set) { return _thrown[set]; }
+
+        /// <summary>
+        /// Physics mode: every die in the tray lies still. Builds each thrown set's result from what the dice show.
+        /// With advantage / disadvantage the set was thrown twice; the losing copy is reported by <see cref="TakeDiscard"/>
+        /// and leaves the tray, and later calls keep that set's result as it is.
+        /// </summary>
+        public void Settle(IList<DieReading> readings)
+        {
+            for (int s = 0; s < SetCount; s++)
+            {
+                if (!_thrown[s]) { _passes[s] = null; continue; }
+                if (_discarded[s] >= 0 && _passes[s] != null) continue; // already resolved, the losing dice are gone
+
+                int passCount = Sets[s].Advantage == AdvantageMode.Normal ? 1 : 2;
+                PoolRoll[] pools = DicePlanner.ToPools(readings, s, passCount);
+                if (pools[0].Dice.Count == 0 && (passCount == 1 || pools[1].Dice.Count == 0))
+                {
+                    _passes[s] = null;
+                    continue;
+                }
+                _passes[s] = pools;
+                if (passCount == 2)
+                {
+                    _discarded[s] = 1 - GetResult(s).ChosenPass;
+                    _discardPending[s] = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// The advantage pass that lost and has to leave the tray, or -1. Reported once per throw.
+        /// </summary>
+        public int TakeDiscard(int set)
+        {
+            if (!_discardPending[set]) return -1;
+            _discardPending[set] = false;
+            return _discarded[set];
+        }
 
         public SetResult GetResult(int set)
         {
@@ -108,7 +169,7 @@ namespace DiceThrower.Core
         {
             for (int s = 0; s < SetCount; s++)
             {
-                _passes[s] = null;
+                ResetSet(s);
                 RollSetConfig source = s < sets.Count ? sets[s] : new RollSetConfig();
                 RollSetConfig target = Sets[s];
                 target.Pool.Clear();
@@ -129,7 +190,7 @@ namespace DiceThrower.Core
             var c = new TrayChange { ClearAll = true };
             for (int s = 0; s < SetCount; s++)
             {
-                _passes[s] = null;
+                ResetSet(s);
                 if (Sets[s].Enabled && !Sets[s].Pool.IsEmpty) RollSetFresh(s, c, false);
             }
             return c;
@@ -142,15 +203,13 @@ namespace DiceThrower.Core
             result = Sets[set].Pool.TryAdd(type, Limits);
             if (result != AddResult.Added || !Sets[set].Enabled) return c;
 
-            if (_passes[set] == null || Sets[set].Advantage != AdvantageMode.Normal)
+            if (!_thrown[set] || Sets[set].Advantage != AdvantageMode.Normal)
             {
                 RollSetFresh(set, c, true);
             }
             else
             {
-                DieRoll d = RollEngine.RollDie(type, _rng);
-                _passes[set][0].Dice.Add(d);
-                DicePlanner.PlanDie(d, set, c.Add);
+                AddThrownDie(set, type, c);
             }
             return c;
         }
@@ -170,11 +229,11 @@ namespace DiceThrower.Core
 
             if (pool.IsEmpty)
             {
-                _passes[set] = null;
+                ResetSet(set);
                 c.ClearSets.Add(set);
                 return c;
             }
-            if (_passes[set] == null || Sets[set].Advantage != AdvantageMode.Normal)
+            if (!_thrown[set] || Sets[set].Advantage != AdvantageMode.Normal)
             {
                 RollSetFresh(set, c, true);
                 return c;
@@ -182,13 +241,13 @@ namespace DiceThrower.Core
 
             if (now > old)
             {
-                for (int i = 0; i < now - old; i++) AddRolledDie(set, type, c);
+                for (int i = 0; i < now - old; i++) AddThrownDie(set, type, c);
             }
             else
             {
-                _passes[set][0].Dice.RemoveAll(d => d.Type == type);
+                if (_passes[set] != null) _passes[set][0].Dice.RemoveAll(d => d.Type == type);
                 c.RemoveTypes.Add(new KeyValuePair<int, DieType>(set, type));
-                for (int i = 0; i < now; i++) AddRolledDie(set, type, c);
+                for (int i = 0; i < now; i++) AddThrownDie(set, type, c);
             }
             return c;
         }
@@ -214,7 +273,7 @@ namespace DiceThrower.Core
             Sets[set].Enabled = enabled;
             if (!enabled)
             {
-                _passes[set] = null;
+                ResetSet(set);
                 c.ClearSets.Add(set);
             }
             else if (!Sets[set].Pool.IsEmpty)
@@ -230,23 +289,48 @@ namespace DiceThrower.Core
             for (int s = 0; s < SetCount; s++)
             {
                 Sets[s].Pool.Clear();
-                _passes[s] = null;
+                ResetSet(s);
             }
             return new TrayChange { ClearAll = true };
         }
 
         // ------------------------------------------------------------------ helpers
 
+        private void ResetSet(int set)
+        {
+            _passes[set] = null;
+            _thrown[set] = false;
+            _discarded[set] = -1;
+            _discardPending[set] = false;
+        }
+
         private void RollSetFresh(int set, TrayChange c, bool clearSetFirst)
         {
+            if (clearSetFirst) c.ClearSets.Add(set);
+            _discarded[set] = -1;
+            _discardPending[set] = false;
+            _thrown[set] = true;
+            if (UsePhysics)
+            {
+                _passes[set] = null; // the result comes from the dice once they lie still
+                int passCount = Sets[set].Advantage == AdvantageMode.Normal ? 1 : 2;
+                for (int p = 0; p < passCount; p++) DicePlanner.PlanPool(Sets[set].Pool, set, p, c.Add);
+                return;
+            }
             SetResult r = RollEngine.Roll(Sets[set], _rng);
             _passes[set] = r.Passes;
-            if (clearSetFirst) c.ClearSets.Add(set);
             DicePlanner.Plan(r, set, c.Add);
         }
 
-        private void AddRolledDie(int set, DieType type, TrayChange c)
+        /// <summary>One more die in a set that is already in the tray.</summary>
+        private void AddThrownDie(int set, DieType type, TrayChange c)
         {
+            if (UsePhysics)
+            {
+                _passes[set] = null;
+                DicePlanner.PlanUnrolled(type, 1, set, 0, c.Add);
+                return;
+            }
             DieRoll d = RollEngine.RollDie(type, _rng);
             _passes[set][0].Dice.Add(d);
             DicePlanner.PlanDie(d, set, c.Add);

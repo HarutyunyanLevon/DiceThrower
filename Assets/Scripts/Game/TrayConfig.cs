@@ -31,10 +31,12 @@ namespace DiceThrower.Game
         public float spinMin = 12f;
         public float spinMax = 30f;
 
+        [Header("Throwing more dice into a tray that already has dice")]
+        [Tooltip("The new dice start at a random point this far inside the tray's edge and fly towards the middle.")]
+        public float randomSpawnInset = 0.9f;
+
         [Header("Settling")]
-        [Tooltip("After this long the numbers are remapped even if something is still moving.")]
-        public float maxRollSeconds = 6f;
-        [Tooltip("A die is never judged at rest before this age.")]
+        [Tooltip("How long the player waits before dice that still move are set where they are is in Settings (RulesConfig.settleSeconds).")]
         public float minDieAgeSeconds = 0.4f;
         [Tooltip("Squared speed below which a die counts as still.")]
         public float stillLinearSqr = 0.04f;
@@ -50,6 +52,21 @@ namespace DiceThrower.Game
         public float nudgeSideSpeed = 1f;
         public float nudgeUpSpeed = 7f;
         public float nudgeSpin = 8f;
+
+        [Header("Setting dice by hand (timer ran out, or the player tapped the tray)")]
+        [Tooltip("Dice are never placed closer than this to the tray's inner edge (on top of their own radius).")]
+        public float placeEdgeInset = 0.9f;
+        [Tooltip("Share of a die's circumradius that counts as its footprint when dice are pushed apart.")]
+        [Range(0.5f, 1.2f)] public float footprintScale = 0.9f;
+        [Tooltip("Extra gap kept between dice that were pushed apart.")]
+        public float placeGap = 0.1f;
+        [Tooltip("Random positions tried for a free spot before the roomiest one is used.")]
+        public int placeAttempts = 40;
+        [Tooltip("Passes of pushing overlapping dice apart.")]
+        public int separatePasses = 24;
+
+        [Header("Dice that leave the tray (the losing copy with advantage / disadvantage)")]
+        public float dismissSeconds = 0.3f;
 
         [Header("Dice that fall out of the world")]
         [Tooltip("How far below the tray floor a die may fall before it is put back.")]

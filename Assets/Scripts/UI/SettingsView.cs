@@ -6,7 +6,7 @@ using DiceThrower.Game;
 
 namespace DiceThrower.UI
 {
-    /// <summary>The Settings tab: sound and haptics switches, dice skin, colour theme, the chip usage window and a clear-history button. Every change is saved at once.</summary>
+    /// <summary>The Settings tab: sound and haptics switches, physics dice and settle time, dice skin, colour theme, the chip usage window and a clear-history button. Every change is saved at once.</summary>
     public sealed class SettingsView
     {
         private const string SwitchOnClass = "switch--on";
@@ -19,12 +19,13 @@ namespace DiceThrower.UI
         private readonly ThemeApplier _theme;
         private readonly DialogView _dialog;
         private readonly Action _onSkinChanged;
+        private readonly Action _onThrowChanged;
         private readonly Action<string> _toast;
-        private readonly VisualElement _soundSwitch, _hapticsSwitch, _clearButton, _windowMinus, _windowPlus;
-        private readonly Label _skinValue, _themeValue, _windowValue;
+        private readonly VisualElement _soundSwitch, _hapticsSwitch, _clearButton, _windowMinus, _windowPlus, _physicsSwitch, _settleMinus, _settlePlus;
+        private readonly Label _skinValue, _themeValue, _windowValue, _settleValue;
 
         public SettingsView(VisualElement root, DataUiConfig cfg, RulesConfig rules, AppData data, ThemeApplier theme,
-                            DialogView dialog, Action onSkinChanged, Action<string> toast)
+                            DialogView dialog, Action onSkinChanged, Action onThrowChanged, Action<string> toast)
         {
             _cfg = cfg;
             _rules = rules;
@@ -32,10 +33,15 @@ namespace DiceThrower.UI
             _theme = theme;
             _dialog = dialog;
             _onSkinChanged = onSkinChanged;
+            _onThrowChanged = onThrowChanged;
             _toast = toast;
 
             _soundSwitch = root.Q<VisualElement>("switch-sound");
             _hapticsSwitch = root.Q<VisualElement>("switch-haptics");
+            _physicsSwitch = root.Q<VisualElement>("switch-physics");
+            _settleMinus = root.Q<VisualElement>("settle-minus");
+            _settlePlus = root.Q<VisualElement>("settle-plus");
+            _settleValue = root.Q<Label>("settle-value");
             _clearButton = root.Q<VisualElement>("btn-clear-history");
             _windowMinus = root.Q<VisualElement>("window-minus");
             _windowPlus = root.Q<VisualElement>("window-plus");
@@ -45,6 +51,9 @@ namespace DiceThrower.UI
 
             PressGesture.Tappable(root.Q<VisualElement>("row-sound"), () => { _data.Settings.Sound = !_data.Settings.Sound; Changed(); });
             PressGesture.Tappable(root.Q<VisualElement>("row-haptics"), () => { _data.Settings.Haptics = !_data.Settings.Haptics; Changed(); });
+            PressGesture.Tappable(root.Q<VisualElement>("row-physics"), () => { _data.Settings.PhysicsDice = !_data.Settings.PhysicsDice; Changed(); _onThrowChanged(); });
+            PressGesture.Tappable(_settleMinus, () => StepSettle(-_rules.settleSecondsStep));
+            PressGesture.Tappable(_settlePlus, () => StepSettle(_rules.settleSecondsStep));
             PressGesture.Tappable(root.Q<VisualElement>("row-skin"), NextSkin);
             PressGesture.Tappable(root.Q<VisualElement>("row-theme"), NextTheme);
             PressGesture.Tappable(_windowMinus, () => StepWindow(-_rules.usageWindowStep));
@@ -57,6 +66,11 @@ namespace DiceThrower.UI
             int window = Window();
             _soundSwitch.EnableInClassList(SwitchOnClass, _data.Settings.Sound);
             _hapticsSwitch.EnableInClassList(SwitchOnClass, _data.Settings.Haptics);
+            int settle = SettleSeconds();
+            _physicsSwitch.EnableInClassList(SwitchOnClass, _data.Settings.PhysicsDice);
+            _settleValue.text = string.Format(_cfg.settleSecondsFormat, settle);
+            _settleMinus.EnableInClassList(StepperDisabledClass, !_data.Settings.PhysicsDice || settle <= _rules.settleSecondsMin);
+            _settlePlus.EnableInClassList(StepperDisabledClass, !_data.Settings.PhysicsDice || settle >= _rules.settleSecondsMax);
             _skinValue.text = _cfg.skinSets[SkinIndex()].name;
             _themeValue.text = _theme.NameOf(_data.Settings.Theme);
             _windowValue.text = string.Format(_cfg.usageWindowFormat, window);
@@ -74,6 +88,20 @@ namespace DiceThrower.UI
         private int Window()
         {
             return Mathf.Clamp(_data.Settings.UsageWindowOr(_rules.usageWindow), _rules.usageWindowMin, _rules.usageWindowMax);
+        }
+
+        /// <summary>The saved settle time, or the config default, kept inside the allowed range.</summary>
+        private int SettleSeconds()
+        {
+            return Mathf.Clamp(_data.Settings.SettleSecondsOr(_rules.settleSeconds), _rules.settleSecondsMin, _rules.settleSecondsMax);
+        }
+
+        private void StepSettle(int delta)
+        {
+            if (!_data.Settings.PhysicsDice) return;
+            _data.Settings.SettleSeconds = Mathf.Clamp(SettleSeconds() + delta, _rules.settleSecondsMin, _rules.settleSecondsMax);
+            Changed();
+            _onThrowChanged();
         }
 
         private void Changed()

@@ -13,6 +13,15 @@ namespace DiceThrower.Core
         public int Theme;
         /// <summary>How many of the latest throws rank the pinned chips. 0 = not chosen yet, the RulesConfig value applies.</summary>
         public int UsageWindow;
+        /// <summary>Dice are simulated and the result is what they show. Off: the result is random and the dice just appear showing it.</summary>
+        public bool PhysicsDice = true;
+        /// <summary>Seconds after a throw before dice that still move are set where they are. 0 = not chosen yet, the RulesConfig value applies.</summary>
+        public int SettleSeconds;
+
+        public int SettleSecondsOr(int configDefault)
+        {
+            return SettleSeconds > 0 ? SettleSeconds : configDefault;
+        }
 
         public int UsageWindowOr(int configDefault)
         {

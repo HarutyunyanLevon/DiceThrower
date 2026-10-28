@@ -4,15 +4,21 @@ using DiceThrower.Core;
 namespace DiceThrower.Game
 {
     /// <summary>
-    /// One physical die in the tray. The result was already decided by the RollEngine; this die
-    /// just tumbles for real, and once it has settled the number on its top face is remapped
-    /// (by rewriting UVs) to the decided value.
+    /// One physical die in the tray. Thrown for real, whatever it shows when it lies still is its value.
+    /// A die with a target value (the RNG decided) is instead just placed showing that value.
     /// </summary>
     public sealed class DieBody : MonoBehaviour
     {
         public DieKind Kind { get; private set; }
         public int TargetValue { get; private set; }
         public int SetIndex { get; private set; }
+        /// <summary>0, or 1 for the second copy thrown for advantage / disadvantage.</summary>
+        public int Pass { get; private set; }
+        public bool HasTarget { get { return TargetValue != PhysicalDie.NoTarget; } }
+        /// <summary>The die has come to rest (or was set by hand) since it was last thrown.</summary>
+        public bool Resting { get; private set; }
+        /// <summary>Circumradius of the die.</summary>
+        public float Radius { get { return _shape.Radius; } }
 
         /// <summary>Raised when the die hits something; the argument is the impact speed.</summary>
         public event System.Action<float> Hit;
@@ -22,9 +28,8 @@ namespace DiceThrower.Game
         private TrayConfig _cfg;
         private Mesh _mesh;
         private Vector2[] _uv;
-        private ModelDie _model;       // imported model: set instead of the generated atlas
-        private Quaternion _modelRot = Quaternion.identity;
-        private int[] _faceValue;   // non-d4: value printed on each face
+        private ModelDie _model;       // imported model: its numbers are in its texture, no atlas needed
+        private int[] _faceValue;   // non-d4: value printed on each face (what the die shows when that face is on top)
         private int[] _vertexLabel; // d4: number at each vertex
         private Rigidbody _rb;
 
@@ -43,7 +48,7 @@ namespace DiceThrower.Game
         /// Instantiates the Die prefab (Rigidbody, MeshCollider, MeshFilter, MeshRenderer and their
         /// physics settings live there) and gives it the generated mesh and numbered texture.
         /// </summary>
-        public static DieBody Spawn(DieBody prefab, Transform parent, TrayConfig cfg, DieKind kind, DiceSkin skin, int targetValue, int setIndex)
+        public static DieBody Spawn(DieBody prefab, Transform parent, TrayConfig cfg, DieKind kind, DiceSkin skin, int targetValue, int setIndex, int pass)
         {
             DieVisual visual = DiceVisuals.Get(kind, skin);
 
@@ -52,6 +57,7 @@ namespace DiceThrower.Game
             die.Kind = kind;
             die.TargetValue = targetValue;
             die.SetIndex = setIndex;
+            die.Pass = pass;
             die._cfg = cfg;
             die._visual = visual;
             die._shape = visual.Shape;
@@ -68,7 +74,7 @@ namespace DiceThrower.Game
             return die;
         }
 
-        // ------------------------------------------------------------------ labels (the remap machinery)
+        // ------------------------------------------------------------------ labels
 
         private void InitLabels()
         {
@@ -148,75 +154,6 @@ namespace DiceThrower.Game
             return dot > _cfg.flatDot;
         }
 
-        /// <summary>Makes the top of the die show <see cref="TargetValue"/>.</summary>
-        public void RemapToTarget()
-        {
-            if (_model != null) { RemapModel(); return; }
-            if (_shape.VertexLabeled) RemapD4();
-            else RemapFaces();
-            _mesh.uv = _uv;
-        }
-
-        /// <summary>
-        /// Imported model: the numbers are baked into its texture, so instead of editing UVs the whole die is turned by a
-        /// symmetry of its shape (the silhouette and collider do not change) until the target number is on top.
-        /// </summary>
-        private void RemapModel()
-        {
-            bool vertexMode = _shape.VertexLabeled;
-            float dot;
-            int top = vertexMode ? TopVertex() : TopFace(out dot);
-            int[] labels = vertexMode ? _vertexLabel : _faceValue;
-            if (labels[top] == TargetValue) return;
-            int source = System.Array.IndexOf(labels, TargetValue);
-            if (source < 0) return;
-
-            Quaternion q = _model.Rotation(source, top);
-            int[] moved = _model.Permutation(q);
-            var next = new int[labels.Length];
-            for (int i = 0; i < labels.Length; i++) next[moved[i]] = labels[i];
-            System.Array.Copy(next, labels, labels.Length);
-
-            _modelRot = q * _modelRot;
-            _model.Apply(_mesh, _modelRot);
-        }
-
-        private void RemapFaces()
-        {
-            float dot;
-            int top = TopFace(out dot);
-            if (_faceValue[top] == TargetValue) return;
-
-            int other = System.Array.IndexOf(_faceValue, TargetValue);
-            if (other < 0) return;
-            int tmp = _faceValue[top];
-            _faceValue[top] = _faceValue[other];
-            _faceValue[other] = tmp;
-            ApplyFaceUV(top);
-            ApplyFaceUV(other);
-        }
-
-        /// <summary>
-        /// d4: relabel the corners with a 3-cycle (an even permutation), which keeps the numbers'
-        /// handedness so no mirrored texture cells are needed, and puts the target on the top corner.
-        /// </summary>
-        private void RemapD4()
-        {
-            int top = TopVertex();
-            if (_vertexLabel[top] == TargetValue) return;
-
-            int w = System.Array.IndexOf(_vertexLabel, TargetValue);
-            if (w < 0) return;
-            int x = 0;
-            while (x == top || x == w) x++;
-
-            int labelTop = _vertexLabel[top];
-            _vertexLabel[top] = _vertexLabel[w];
-            _vertexLabel[w] = _vertexLabel[x];
-            _vertexLabel[x] = labelTop;
-            for (int f = 0; f < _shape.FaceCount; f++) ApplyFaceUV(f);
-        }
-
         // ------------------------------------------------------------------ throwing and settling
 
         public void Launch(Vector3 position, Quaternion rotation, Vector3 velocity, Vector3 angularVelocity)
@@ -227,10 +164,17 @@ namespace DiceThrower.Game
             _age = 0f;
             _stillTime = 0f;
             _nudges = 0;
+            Resting = false;
         }
 
         /// <summary>Call every frame while rolling. True once the die has come to rest.</summary>
         public bool Tick(float dt, float floorY)
+        {
+            Resting = TickRest(dt, floorY);
+            return Resting;
+        }
+
+        private bool TickRest(float dt, float floorY)
         {
             _age += dt;
             if (transform.position.y < floorY - _cfg.fallMargin)
@@ -250,6 +194,90 @@ namespace DiceThrower.Game
         }
 
         public bool NeedsNudge { get { return !IsFlat() && _nudges < _cfg.maxNudges; } }
+
+        // ------------------------------------------------------------------ setting a die by hand
+
+        /// <summary>Stops the die where it is.</summary>
+        public void Freeze()
+        {
+            _rb.linearVelocity = Vector3.zero;
+            _rb.angularVelocity = Vector3.zero;
+            _rb.Sleep();
+            Resting = true;
+        }
+
+        /// <summary>
+        /// Stops the die and tilts it to lie flat on the face (the corner, for a d4) that is nearest to up, so what it shows stays the same.
+        /// It ends on the floor at the same x/z.
+        /// </summary>
+        public void SnapFlat(float floorY)
+        {
+            Freeze();
+            Quaternion q = transform.rotation;
+            Vector3 current = q * (_shape.VertexLabeled ? _shape.Verts[TopVertex()].normalized : _shape.FaceNormals[TopFaceIndex()]);
+            Quaternion flat = Quaternion.FromToRotation(current, Vector3.up) * q;
+            Vector3 p = transform.position;
+            SetPose(new Vector3(p.x, 0f, p.z), flat, floorY);
+        }
+
+        /// <summary>Puts the die on the floor at (x, z) showing <paramref name="value"/> on top, turned by <paramref name="yawDegrees"/>.</summary>
+        public void PlaceShowing(Vector3 world, int value, float yawDegrees, float floorY)
+        {
+            Freeze();
+            int item = System.Array.IndexOf(_shape.VertexLabeled ? _vertexLabel : _faceValue, value);
+            if (item < 0) item = 0;
+            Vector3 axis = _shape.VertexLabeled ? _shape.Verts[item].normalized : _shape.FaceNormals[item];
+            Quaternion flat = Quaternion.AngleAxis(yawDegrees, Vector3.up) * Quaternion.FromToRotation(axis, Vector3.up);
+            SetPose(new Vector3(world.x, 0f, world.z), flat, floorY);
+        }
+
+        /// <summary>A random number this die can show.</summary>
+        public int RandomValue()
+        {
+            int[] labels = _shape.VertexLabeled ? _vertexLabel : _faceValue;
+            return labels[Random.Range(0, labels.Length)];
+        }
+
+        /// <summary>Moves the die so its lowest corner touches the floor.</summary>
+        private void SetPose(Vector3 xz, Quaternion rotation, float floorY)
+        {
+            float lowest = float.MaxValue;
+            for (int i = 0; i < _shape.Verts.Length; i++) lowest = Mathf.Min(lowest, (rotation * _shape.Verts[i]).y);
+            transform.SetPositionAndRotation(new Vector3(xz.x, floorY - lowest + 0.002f, xz.z), rotation);
+            Resting = true;
+        }
+
+        /// <summary>The die shrinks away and is destroyed (it no longer counts for anything).</summary>
+        public void Dismiss(float seconds)
+        {
+            _rb.isKinematic = true;
+            GetComponent<Collider>().enabled = false;
+            StartCoroutine(ShrinkAway(Mathf.Max(0.01f, seconds)));
+        }
+
+        private System.Collections.IEnumerator ShrinkAway(float seconds)
+        {
+            Vector3 from = transform.localScale;
+            for (float t = 0f; t < seconds; t += Time.deltaTime)
+            {
+                transform.localScale = from * (1f - t / seconds);
+                yield return null;
+            }
+            Destroy(gameObject);
+        }
+
+        /// <summary>Moves a resting die sideways (it stays on the floor).</summary>
+        public void ShiftTo(Vector3 world)
+        {
+            Vector3 p = transform.position;
+            transform.position = new Vector3(world.x, p.y, world.z);
+        }
+
+        private int TopFaceIndex()
+        {
+            float dot;
+            return TopFace(out dot);
+        }
 
         /// <summary>A die cocked against another die or a wall gets a small hop to fall flat.</summary>
         public void Nudge()
