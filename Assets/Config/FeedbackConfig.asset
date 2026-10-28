@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8938f91d4c05b8408f1bfe17b398ed1, type: 3}
+  m_Name: FeedbackConfig
+  m_EditorClassIdentifier: DiceThrower.Game::DiceThrower.Game.FeedbackConfig
+  masterVolume: 0.8
+  throwCue:
+    clip: {fileID: 8300000, guid: d1c9487d63e12094bb1df3da60f9736e, type: 3}
+    volume: 0.7
+    vibrateMs: 15
+    vibrateStrength: 0.35
+  dieHitCue:
+    clip: {fileID: 8300000, guid: 083f1660617c4fb469850d22e22efd7e, type: 3}
+    volume: 0.9
+    vibrateMs: 0
+    vibrateStrength: 0
+  settledCue:
+    clip: {fileID: 8300000, guid: 0d1185e2b2b90f442a81ff9bbb63670a, type: 3}
+    volume: 0.8
+    vibrateMs: 25
+    vibrateStrength: 0.5
+  nat20Cue:
+    clip: {fileID: 8300000, guid: 97e2df0d15b5f994eab8e3959b8f9adc, type: 3}
+    volume: 1
+    vibrateMs: 70
+    vibrateStrength: 1
+  nat1Cue:
+    clip: {fileID: 8300000, guid: f14952bbed06a5d4f9b37a9acd822421, type: 3}
+    volume: 1
+    vibrateMs: 45
+    vibrateStrength: 0.8
+  blockedCue:
+    clip: {fileID: 8300000, guid: 4dcca38a1fb75bc4da63569399532d3e, type: 3}
+    volume: 0.8
+    vibrateMs: 20
+    vibrateStrength: 0.6
+  hitMinSpeed: 1.5
+  hitMaxSpeed: 9
+  hitMinVolume: 0.25
+  hitMinIntervalSeconds: 0.04
+  logCues: 0

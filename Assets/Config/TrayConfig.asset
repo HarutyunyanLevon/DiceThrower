@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2c35f6aa92685e4083b8ce838289074, type: 3}
+  m_Name: TrayConfig
+  m_EditorClassIdentifier: DiceThrower.Game::DiceThrower.Game.TrayConfig
+  gravity: 32
+  spawnColumns: 4
+  spawnRowsPerLayer: 3
+  spawnSpacing: 1.5
+  spawnJitter: 0.15
+  spawnHeight: 2.6
+  spawnLayerHeight: 1.7
+  spawnEdgeInset: 2.4
+  launchVelocityMin: {x: -2.5, y: 2, z: 5}
+  launchVelocityMax: {x: 2.5, y: 5, z: 10}
+  spinMin: 12
+  spinMax: 30
+  maxRollSeconds: 6
+  minDieAgeSeconds: 0.4
+  stillLinearSqr: 0.04
+  stillAngularSqr: 0.25
+  stillSeconds: 0.25
+  flatDot: 0.97
+  maxNudges: 2
+  nudgeSideSpeed: 1
+  nudgeUpSpeed: 7
+  nudgeSpin: 8
+  fallMargin: 3
+  respawnHeight: 3

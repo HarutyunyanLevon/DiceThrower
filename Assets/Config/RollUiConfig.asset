@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f67d8a404a0581e4393951e603197bf6, type: 3}
+  m_Name: RollUiConfig
+  m_EditorClassIdentifier: DiceThrower.UI::DiceThrower.UI.RollUiConfig
+  sets:
+  - caption: ATTACK
+    rowClass: dice-row--atk
+    skin: {fileID: 11400000, guid: 5b3e78690fa7c8846b2a3db8d670f447, type: 2}
+  - caption: DAMAGE
+    rowClass: dice-row--dmg
+    skin: {fileID: 11400000, guid: 56a0e57c335d96b449f04b71936df3b9, type: 2}
+  targetFrameRate: 60
+  slideThresholdPx: 10
+  countPxPerStep: 24
+  modifierPxPerStep: 14
+  sliderTrackPad: 22
+  toastSeconds: 1.6
+  badgeFlashSeconds: 0.35
+  clearText: Clear
+  saveText: Save
+  savePendingToast: Presets arrive with the data milestone
+  limitTotalFormat: 'Limit reached: {0} dice per set'
+  limitTypeFormat: 'Limit reached: {0} x {1}'
+  rangeCaptionFormat: '{0}  -  {1} to {2}'
+  otherTabNotes:
+  - 'Presets arrive with the data milestone: saved setups, pinned chips on this screen.'
+  - 'History arrives with the data milestone: your last 100 throws, tap one to rethrow
+    it.'
+  - 'Settings arrive with the data milestone: theme, usage window, dice limits, sound
+    and haptics.'

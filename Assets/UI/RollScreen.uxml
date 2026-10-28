@@ -1,0 +1,104 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <ui:Style src="Tavern.uss" />
+    <ui:Style src="Roll.uss" />
+    <ui:Style src="Pages.uss" />
+    <ui:VisualElement name="safe-area" class="safe-area">
+    <ui:VisualElement name="screen" class="screen">
+        <ui:VisualElement name="tabbar" class="tabbar">
+            <ui:VisualElement name="tab-roll" class="tab tab--active">
+                <ui:Label text="Roll" class="lbl tab__text" />
+            </ui:VisualElement>
+            <ui:VisualElement name="tab-presets" class="tab">
+                <ui:Label text="Presets" class="lbl tab__text" />
+            </ui:VisualElement>
+            <ui:VisualElement name="tab-history" class="tab">
+                <ui:Label text="History" class="lbl tab__text" />
+            </ui:VisualElement>
+            <ui:VisualElement name="tab-settings" class="tab">
+                <ui:Label text="Settings" class="lbl tab__text" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="page-roll" class="page">
+            <ui:VisualElement name="headers" class="headers" />
+            <ui:VisualElement name="tray-wrap" class="tray-wrap">
+                <ui:VisualElement name="tray-area" class="tray-area" />
+                <ui:ScrollView name="chips" class="chips" mode="Horizontal" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Hidden" />
+            </ui:VisualElement>
+            <ui:VisualElement name="actions" class="actions">
+                <ui:VisualElement name="btn-clear" class="action action--ghost" />
+                <ui:VisualElement name="btn-save" class="action action--ghost" />
+                <ui:VisualElement name="btn-throw" class="action action--primary">
+                    <ui:Label text="Throw" class="lbl action__text action__text--primary" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="rows" class="rows" />
+        </ui:VisualElement>
+
+        <ui:VisualElement name="page-presets" class="page">
+            <ui:Label name="presets-empty" text="" class="lbl empty-note" />
+            <ui:ScrollView name="presets-list" class="list" horizontal-scroller-visibility="Hidden" />
+        </ui:VisualElement>
+
+        <ui:VisualElement name="page-history" class="page">
+            <ui:Label name="history-empty" text="" class="lbl empty-note" />
+            <ui:ScrollView name="history-list" class="list" horizontal-scroller-visibility="Hidden" />
+        </ui:VisualElement>
+
+        <ui:VisualElement name="page-settings" class="page">
+            <ui:VisualElement name="row-sound" class="setting">
+                <ui:Label text="Sound" class="lbl setting__label" />
+                <ui:VisualElement name="switch-sound" class="switch">
+                    <ui:VisualElement class="switch__knob" picking-mode="Ignore" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="row-haptics" class="setting">
+                <ui:Label text="Haptics" class="lbl setting__label" />
+                <ui:VisualElement name="switch-haptics" class="switch">
+                    <ui:VisualElement class="switch__knob" picking-mode="Ignore" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="row-skin" class="setting">
+                <ui:Label text="Dice skin" class="lbl setting__label" />
+                <ui:Label name="skin-value" text="" class="lbl setting__value" />
+            </ui:VisualElement>
+            <ui:VisualElement name="btn-clear-history" class="action action--danger">
+                <ui:Label text="Clear history" class="lbl action__text" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:Label name="toast" text="" class="lbl toast" picking-mode="Ignore" />
+
+        <ui:VisualElement name="dialog" class="dialog">
+            <ui:VisualElement class="dialog__card">
+                <ui:Label name="dialog-title" text="" class="lbl dialog__title" />
+                <ui:Label name="dialog-message" text="" class="lbl dialog__message" />
+                <ui:VisualElement class="dialog__buttons">
+                    <ui:VisualElement name="dialog-cancel" class="action action--ghost">
+                        <ui:Label name="dialog-cancel-text" text="" class="lbl dialog__btn-text" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="dialog-ok" class="action action--primary">
+                        <ui:Label name="dialog-ok-text" text="" class="lbl dialog__btn-text" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="editor" class="dialog">
+            <ui:VisualElement class="dialog__card dialog__card--wide">
+                <ui:Label name="editor-title" text="" class="lbl dialog__title" />
+                <ui:TextField name="editor-name" class="dialog__input" />
+                <ui:VisualElement name="editor-sets" class="editor-sets" />
+                <ui:VisualElement class="dialog__buttons">
+                    <ui:VisualElement name="editor-cancel" class="action action--ghost">
+                        <ui:Label name="editor-cancel-text" text="" class="lbl dialog__btn-text" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="editor-ok" class="action action--primary">
+                        <ui:Label name="editor-ok-text" text="" class="lbl dialog__btn-text" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

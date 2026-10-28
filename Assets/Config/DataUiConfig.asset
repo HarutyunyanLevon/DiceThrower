@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9f221485903de4429db0642ec4386ca, type: 3}
+  m_Name: DataUiConfig
+  m_EditorClassIdentifier: DiceThrower.UI::DiceThrower.UI.DataUiConfig
+  saveFileName: dicethrower_save.json
+  historyCommitDelaySeconds: 2
+  historyTimeFormat: dd MMM  HH:mm
+  skinSets:
+  - name: Ivory & Crimson
+    skins:
+    - {fileID: 11400000, guid: 5b3e78690fa7c8846b2a3db8d670f447, type: 2}
+    - {fileID: 11400000, guid: 56a0e57c335d96b449f04b71936df3b9, type: 2}
+  - name: Obsidian & Emerald
+    skins:
+    - {fileID: 11400000, guid: 8db3c5e4f0e874d4c802528eb0010e11, type: 2}
+    - {fileID: 11400000, guid: 8aef831c3f4db1f4cad4193411df1a72, type: 2}
+  cancelText: Cancel
+  savePresetTitle: Save preset
+  savePresetOk: Save
+  renamePresetTitle: Rename preset
+  renamePresetOk: Rename
+  deletePresetTitle: Delete preset?
+  deletePresetMessageFormat: '"{0}" will be removed.'
+  deletePresetOk: Delete
+  clearHistoryTitle: Clear history?
+  clearHistoryMessage: All recorded throws will be removed.
+  clearHistoryOk: Clear
+  saveEmptyToast: Add some dice first
+  presetSavedFormat: Saved "{0}"
+  historyClearedToast: History cleared
+  skinChangedToast: The new skin applies from the next throw
+  defaultPresetNameFormat: Preset {0}
+  setLineFormat: '{0}: {1}'
+  setOffFormat: '{0} (off)'
+  noDiceText: no dice
+  presetsEmptyText: No presets yet. Set up your dice on the Roll tab and press Save.
+  historyEmptyText: No throws yet.

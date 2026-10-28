@@ -1,0 +1,32 @@
+/* Tavern and Leather theme. Every colour the screen uses is a variable here,
+   so another theme is just another file that redefines these. */
+:root {
+    --text: #f4e6c8;
+    --muted: #d3bd96;
+    --accent: #e0b25a;
+    --accent-ink: #1e1206;
+    --off: #6b5a45;
+    --panel: #3a2416;
+    --panel-edge: #c79a5c;
+    --bg: #2a1a10;
+    --btn: #2a1810;
+    --btn-edge: #5a3a24;
+    --scrim: rgba(26, 15, 8, 0.82);
+
+    --atk: #efe6d0;
+    --atk-ink: #1a1208;
+    --atk-edge: #b9ab86;
+    --dmg: #a8321f;
+    --dmg-ink: #ffffff;
+    --dmg-edge: #f0a58f;
+
+    --adv-n: #8a5a2b;
+    --adv-n-edge: #d9ad73;
+    --adv-n-ink: #ffffff;
+    --adv-a: #3fb36b;
+    --adv-a-edge: #a6f0c2;
+    --adv-a-ink: #04210f;
+    --adv-d: #e8574c;
+    --adv-d-edge: #ffb4ad;
+    --adv-d-ink: #14090a;
+}

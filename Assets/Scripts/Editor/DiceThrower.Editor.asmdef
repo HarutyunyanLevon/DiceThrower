@@ -1,0 +1,21 @@
+{
+    "name": "DiceThrower.Editor",
+    "rootNamespace": "DiceThrower.EditorTools",
+    "references": [
+        "DiceThrower.Game",
+        "DiceThrower.UI",
+        "Unity.InputSystem",
+        "UnityEngine.UI"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

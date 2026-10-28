@@ -1,0 +1,17 @@
+{
+    "name": "DiceThrower.UI",
+    "rootNamespace": "DiceThrower.UI",
+    "references": [
+        "DiceThrower.Core",
+        "DiceThrower.Game"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
