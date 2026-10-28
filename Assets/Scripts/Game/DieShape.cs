@@ -29,6 +29,8 @@ namespace DiceThrower.Game
         public bool VertexLabeled;
         /// <summary>Value on each face at creation (null for the d4).</summary>
         public int[] InitialFaceValue;
+        /// <summary>d4 only: number at each corner at creation. Null = 1..4 in corner order (the generated d4).</summary>
+        public int[] InitialVertexLabels;
 
         public int FaceCount { get { return FaceVerts.Length; } }
 
@@ -49,7 +51,8 @@ namespace DiceThrower.Game
 
         // ------------------------------------------------------------------ build
 
-        private static float RadiusFor(DieKind k)
+        /// <summary>Circumradius every die of this kind is scaled to (generated and imported models alike), so physics stays tuned.</summary>
+        public static float RadiusOf(DieKind k)
         {
             switch (k)
             {
@@ -151,7 +154,7 @@ namespace DiceThrower.Game
             // scale to the wanted circumradius
             float maxLen = 0f;
             for (int i = 0; i < verts.Length; i++) maxLen = Mathf.Max(maxLen, verts[i].magnitude);
-            float radius = RadiusFor(kind);
+            float radius = RadiusOf(kind);
             for (int i = 0; i < verts.Length; i++) verts[i] = verts[i] * (radius / maxLen);
 
             List<int[]> faces = HullFaces(verts, radius);

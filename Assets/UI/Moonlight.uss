@@ -1,0 +1,32 @@
+/* Moonlight theme: the same variables as Tavern.uss in cold slate, silver and violet.
+   It is added after Tavern.uss at runtime (ThemeApplier), so these values win. */
+:root {
+    --text: #e6ebf7;
+    --muted: #a9b4d0;
+    --accent: #b9a6ff;
+    --accent-ink: #120d26;
+    --off: #4a5370;
+    --panel: #1d2540;
+    --panel-edge: #7f8fc4;
+    --bg: #131a2e;
+    --btn: #161d36;
+    --btn-edge: #38446b;
+    --scrim: rgba(8, 11, 24, 0.84);
+
+    --atk: #e6ebf7;
+    --atk-ink: #141a2c;
+    --atk-edge: #9aa6cb;
+    --dmg: #5b3fc4;
+    --dmg-ink: #ffffff;
+    --dmg-edge: #bdaeff;
+
+    --adv-n: #46527f;
+    --adv-n-edge: #98a7d8;
+    --adv-n-ink: #ffffff;
+    --adv-a: #3fb3a0;
+    --adv-a-edge: #a6f0e2;
+    --adv-a-ink: #04211b;
+    --adv-d: #ef6b86;
+    --adv-d-edge: #ffb4c4;
+    --adv-d-ink: #14090d;
+}

@@ -30,6 +30,8 @@ namespace DiceThrower.Core
             data.Settings.Sound = GetBool(settings, "sound", data.Settings.Sound);
             data.Settings.Haptics = GetBool(settings, "haptics", data.Settings.Haptics);
             data.Settings.SkinSet = Math.Max(0, GetInt(settings, "skinSet", data.Settings.SkinSet));
+            data.Settings.Theme = Math.Max(0, GetInt(settings, "theme", data.Settings.Theme));
+            data.Settings.UsageWindow = Math.Max(0, GetInt(settings, "usageWindow", data.Settings.UsageWindow));
 
             foreach (object item in GetList(root, "presets"))
             {
@@ -53,6 +55,8 @@ namespace DiceThrower.Core
                 { "sound", data.Settings.Sound },
                 { "haptics", data.Settings.Haptics },
                 { "skinSet", data.Settings.SkinSet },
+                { "theme", data.Settings.Theme },
+                { "usageWindow", data.Settings.UsageWindow },
             };
 
             var presets = new List<object>();

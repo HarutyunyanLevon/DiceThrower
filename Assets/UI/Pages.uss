@@ -122,6 +122,33 @@
     -unity-font-style: bold;
 }
 
+/* - value + stepper inside a setting row */
+.stepper {
+    flex-direction: row;
+    align-items: center;
+}
+.stepper__btn {
+    width: 36px;
+    height: 36px;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--btn);
+    border-width: 1.5px;
+    border-color: var(--btn-edge);
+    border-radius: 18px;
+}
+.stepper__btn.pressed { background-color: var(--btn-edge); }
+.stepper__btn--disabled { opacity: 0.35; }
+.stepper__sign {
+    font-size: 20px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+}
+.stepper__value {
+    min-width: 84px;
+    -unity-text-align: middle-center;
+}
+
 .action--danger {
     margin-top: 10px;
     background-color: var(--panel);

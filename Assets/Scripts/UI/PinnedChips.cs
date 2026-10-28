@@ -13,11 +13,12 @@ namespace DiceThrower.UI
     {
         private readonly ScrollView _row;
         private readonly AppData _data;
-        private readonly int _window, _max;
+        private readonly Func<int> _window;
+        private readonly int _max;
         private readonly float _tapSlopPx;
         private readonly Action<Preset> _onTap;
 
-        public PinnedChips(VisualElement root, AppData data, int usageWindow, int maxChips, float tapSlopPx, Action<Preset> onTap)
+        public PinnedChips(VisualElement root, AppData data, Func<int> usageWindow, int maxChips, float tapSlopPx, Action<Preset> onTap)
         {
             _row = root.Q<ScrollView>("chips");
             _data = data;
@@ -30,7 +31,7 @@ namespace DiceThrower.UI
         public void Refresh()
         {
             _row.contentContainer.Clear();
-            List<Preset> ranked = PresetUsage.Rank(_data.Presets, _data.History, _window, _max);
+            List<Preset> ranked = PresetUsage.Rank(_data.Presets, _data.History, _window(), _max);
             _row.style.display = ranked.Count == 0 ? DisplayStyle.None : DisplayStyle.Flex;
             for (int i = 0; i < ranked.Count; i++) _row.Add(BuildChip(ranked[i]));
         }

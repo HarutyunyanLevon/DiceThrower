@@ -9,6 +9,15 @@ namespace DiceThrower.Core
         public bool Haptics = true;
         /// <summary>Index into the dice skin sets of the UI config.</summary>
         public int SkinSet;
+        /// <summary>Index into the themes of the UI config.</summary>
+        public int Theme;
+        /// <summary>How many of the latest throws rank the pinned chips. 0 = not chosen yet, the RulesConfig value applies.</summary>
+        public int UsageWindow;
+
+        public int UsageWindowOr(int configDefault)
+        {
+            return UsageWindow > 0 ? UsageWindow : configDefault;
+        }
     }
 
     /// <summary>A named dice configuration: both roll sets with their modifier, advantage and enabled state.</summary>

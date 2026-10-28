@@ -11,6 +11,12 @@ Physics dice, but the result is decided first by the RNG; the dice tumble and th
 3. Open `Assets/Scenes/Roll.unity`, set the Game view to a phone (Google Pixel 9 Pro) and press Play.
 4. Test Runner > EditMode runs the tests.
 
+## Build for Android
+Needs the Android Build Support module (SDK, NDK, OpenJDK) for this Editor version, installed through Unity Hub.
+- **DiceThrower > Configure Android Player** writes the Player Settings (package id, portrait only, IL2CPP, ARM64, min API 26). Change the company name and package id in `AndroidBuild` before publishing.
+- **DiceThrower > Build Android APK** configures, then builds `Builds/DiceThrower.apk` from the scenes in Build Settings. Install it with `adb install -r Builds/DiceThrower.apk` on a phone with USB debugging on.
+- Vibration works only on a device; the VIBRATE permission is added by Unity because `Haptics` references `Handheld.Vibrate`.
+
 ## The app
 - **Roll tab**: an Attack set and a Damage set, each with its own dice row, modifier (-10..+10), advantage (d20 button),
   and on/off switch. Tap a die to add and throw it, press and slide for a count. Throw (or tap the tray) rethrows everything,
@@ -19,7 +25,8 @@ Physics dice, but the result is decided first by the RNG; the dice tumble and th
 - **Preset editor**: the popup for Save and for the pencil. Name, both dice rows, modifiers, advantage and the on/off switches work as on the Roll tab (it reuses `SetPanel` on a `RollSession` of its own). OK needs a name and at least one die.
 - **Pinned chips**: a row above the Throw button. Presets used in the last `usageWindow` throws come first (most used first), then the unused ones, newest saved first, at most `pinnedChipsMax`. Tap a chip to load and throw it.
 - **History tab**: the last throws, newest first, with time, each set's total and its breakdown. Tap one to throw that setup again.
-- **Settings tab**: sound and haptics switches, dice skin, clear history.
+- **Settings tab**: sound and haptics switches, dice skin, colour theme, chip history (usage window, - and + buttons), clear history.
+- **Themes**: a theme is a USS file that redefines the colour variables of `Tavern.uss` (`Moonlight.uss` is the second one). `ThemeApplier` swaps the style sheet at runtime; add a theme by adding a USS file and an entry to `DataUiConfig > Themes`.
 - **Sound and haptics**: six cues (throw, die hit, settled, nat 20, nat 1, limit blocked), each a sound plus a vibration, in `FeedbackConfig`. The two switches are read when a cue plays. Vibration uses the Android vibrator service (nothing happens in the Editor; turn on `logCues` to see the cues in the Console).
 - A throw is written to the history a moment after the last roll (`historyCommitDelaySeconds`), so tapping three dice quickly is one entry.
 
@@ -29,9 +36,9 @@ Physics dice, but the result is decided first by the RNG; the dice tumble and th
 | `Scripts/Core` | Pure C#, no Unity references (`DiceThrower.Core`). Dice, rules, rolling, session, and the data layer. |
 | `Scripts/Game` | Unity side of the 3D tray: procedural dice, physics, camera fit, feedback (`FeedbackPlayer`, `Haptics`), config assets for them. |
 | `Scripts/UI` | UI Toolkit views, the press/slide gestures, UI config assets. |
-| `Scripts/Editor` | `ProjectBuilder` (the menu above), `FeedbackAssets` and `PlaceholderAudio` (the placeholder sounds). |
+| `Scripts/Editor` | `ProjectBuilder` (the menu above) with `BuilderPaths`/`BuilderDefaults` (paths and starting values), `BuilderAssets`, `PrefabBuilder`, `SceneBuilder`; `AndroidBuild`; `FeedbackAssets` and `PlaceholderAudio` (the placeholder sounds). |
 | `Tests/EditMode` | NUnit tests for Core. |
-| `UI` | `RollScreen.uxml`, `Tavern.uss` (theme variables only), `Roll.uss` (Roll tab), `Pages.uss` (other tabs and the dialog). |
+| `UI` | `RollScreen.uxml`, `Tavern.uss` and `Moonlight.uss` (theme variables only), `Roll.uss` (Roll tab), `Pages.uss` (other tabs and the dialog). |
 | `Config` | All tunable numbers and texts as ScriptableObjects. |
 | `Prefabs` | `Die`, `DiceTray`, `RollScreen` (carries the `FeedbackPlayer`). |
 | `Audio` | The placeholder WAVs. Replace a file (same name) or assign other clips in `FeedbackConfig`. |
@@ -58,10 +65,10 @@ The save file is `dicethrower_save.json` in `Application.persistentDataPath`.
 ## Config assets (`Assets/Config`)
 | Asset | What it holds |
 |---|---|
-| `RulesConfig` | Dice caps, modifier range, **history cap**, **preset name length**, **usage window** and **chip count**. |
+| `RulesConfig` | Dice caps, modifier range, **history cap**, **preset name length**, **usage window** (default, min, max, step) and **chip count**. |
 | `FeedbackConfig` | Master volume, the six cues (clip, volume, vibration ms and strength), hit sound thresholds, `logCues`. |
 | `RollUiConfig` | Set captions and row classes, gesture distances, toast times, Roll tab texts. |
-| `DataUiConfig` | Save file name, history commit delay and time format, **dice skin sets**, texts of the Presets, History and Settings tabs and the dialog. |
+| `DataUiConfig` | Save file name, history commit delay and time format, **dice skin sets**, **themes**, texts of the Presets, History and Settings tabs and the dialog. |
 | `TrayConfig`, `CameraFitConfig`, `DicePhysics` | Tray size and spawning, camera fit, die physics. |
 | `Skin_*` | Dice colours. `DataUiConfig` groups them into skin sets (one skin per roll set). |
 

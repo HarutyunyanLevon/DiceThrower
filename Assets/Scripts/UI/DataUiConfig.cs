@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.UIElements;
 using DiceThrower.Core;
 using DiceThrower.Game;
 
@@ -11,6 +12,14 @@ namespace DiceThrower.UI
     {
         public string name = "Skins";
         public DiceSkin[] skins = new DiceSkin[RollSession.SetCount];
+    }
+
+    /// <summary>A named colour theme: a style sheet that redefines the colour variables of Tavern.uss.</summary>
+    [Serializable]
+    public sealed class ThemeSpec
+    {
+        public string name = "Theme";
+        public StyleSheet sheet;
     }
 
     /// <summary>Numbers and texts of the Presets, History and Settings tabs. Limits (history length, name length) are in RulesConfig.</summary>
@@ -29,6 +38,13 @@ namespace DiceThrower.UI
 
         [Header("Dice skins (the Settings tab cycles through these)")]
         public SkinSetSpec[] skinSets = new SkinSetSpec[0];
+
+        [Header("Themes (the Settings tab cycles through these)")]
+        public ThemeSpec[] themes = new ThemeSpec[0];
+
+        [Header("Settings texts")]
+        [Tooltip("{0} = number of throws")]
+        public string usageWindowFormat = "{0} throws";
 
         [Header("Preset editor and dialog texts")]
         public string cancelText = "Cancel";
@@ -62,9 +78,12 @@ namespace DiceThrower.UI
         [TextArea] public string presetsEmptyText = "No presets yet. Set up your dice on the Roll tab and press Save.";
         [TextArea] public string historyEmptyText = "No throws yet.";
 
-        /// <summary>Every skin set needs one skin per roll set.</summary>
+        /// <summary>At least one theme with a style sheet, and every skin set needs one skin per roll set.</summary>
         public bool IsValid()
         {
+            if (themes == null || themes.Length == 0) return false;
+            for (int i = 0; i < themes.Length; i++)
+                if (themes[i].sheet == null) return false;
             if (skinSets == null || skinSets.Length == 0) return false;
             for (int i = 0; i < skinSets.Length; i++)
             {

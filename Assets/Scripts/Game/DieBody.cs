@@ -22,6 +22,8 @@ namespace DiceThrower.Game
         private TrayConfig _cfg;
         private Mesh _mesh;
         private Vector2[] _uv;
+        private ModelDie _model;       // imported model: set instead of the generated atlas
+        private Quaternion _modelRot = Quaternion.identity;
         private int[] _faceValue;   // non-d4: value printed on each face
         private int[] _vertexLabel; // d4: number at each vertex
         private Rigidbody _rb;
@@ -55,8 +57,9 @@ namespace DiceThrower.Game
             die._shape = visual.Shape;
             die._rb = die.GetComponent<Rigidbody>();
 
-            die._mesh = DiceVisuals.BuildMesh(visual.Shape, "die_" + kind);
-            die._uv = new Vector2[visual.Shape.MeshVertexCount];
+            die._model = visual.Model;
+            die._mesh = die._model != null ? die._model.NewMesh() : DiceVisuals.BuildMesh(visual.Shape, "die_" + kind);
+            if (die._model == null) die._uv = new Vector2[visual.Shape.MeshVertexCount];
             die.GetComponent<MeshFilter>().sharedMesh = die._mesh;
             die.GetComponent<MeshRenderer>().sharedMaterial = visual.Material;
             die.GetComponent<MeshCollider>().sharedMesh = visual.CollisionMesh;
@@ -71,12 +74,13 @@ namespace DiceThrower.Game
         {
             if (_shape.VertexLabeled)
             {
-                _vertexLabel = new[] { 1, 2, 3, 4 }; // d4: label i+1 at vertex i
+                _vertexLabel = _shape.InitialVertexLabels != null ? (int[])_shape.InitialVertexLabels.Clone() : new[] { 1, 2, 3, 4 }; // generated d4: label i+1 at vertex i
             }
             else
             {
                 _faceValue = (int[])_shape.InitialFaceValue.Clone();
             }
+            if (_model != null) return; // an imported model's numbers are in its texture
             for (int f = 0; f < _shape.FaceCount; f++) ApplyFaceUV(f);
             _mesh.uv = _uv;
         }
@@ -147,9 +151,34 @@ namespace DiceThrower.Game
         /// <summary>Makes the top of the die show <see cref="TargetValue"/>.</summary>
         public void RemapToTarget()
         {
+            if (_model != null) { RemapModel(); return; }
             if (_shape.VertexLabeled) RemapD4();
             else RemapFaces();
             _mesh.uv = _uv;
+        }
+
+        /// <summary>
+        /// Imported model: the numbers are baked into its texture, so instead of editing UVs the whole die is turned by a
+        /// symmetry of its shape (the silhouette and collider do not change) until the target number is on top.
+        /// </summary>
+        private void RemapModel()
+        {
+            bool vertexMode = _shape.VertexLabeled;
+            float dot;
+            int top = vertexMode ? TopVertex() : TopFace(out dot);
+            int[] labels = vertexMode ? _vertexLabel : _faceValue;
+            if (labels[top] == TargetValue) return;
+            int source = System.Array.IndexOf(labels, TargetValue);
+            if (source < 0) return;
+
+            Quaternion q = _model.Rotation(source, top);
+            int[] moved = _model.Permutation(q);
+            var next = new int[labels.Length];
+            for (int i = 0; i < labels.Length; i++) next[moved[i]] = labels[i];
+            System.Array.Copy(next, labels, labels.Length);
+
+            _modelRot = q * _modelRot;
+            _model.Apply(_mesh, _modelRot);
         }
 
         private void RemapFaces()

@@ -23,6 +23,11 @@ namespace DiceThrower.Game
         [Header("Pinned presets")]
         [Tooltip("The chips on the Roll screen are ordered by use in this many of the latest throws.")]
         public int usageWindow = 30;
+        [Tooltip("Smallest and largest usage window the Settings tab allows.")]
+        public int usageWindowMin = 5;
+        public int usageWindowMax = 100;
+        [Tooltip("How much one press of - or + changes the usage window.")]
+        public int usageWindowStep = 5;
         [Tooltip("Most chips shown on the Roll screen.")]
         public int pinnedChipsMax = 6;
 

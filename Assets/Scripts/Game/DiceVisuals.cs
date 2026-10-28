@@ -11,6 +11,8 @@ namespace DiceThrower.Game
         public DiceAtlas Atlas;
         public Material Material;
         public Mesh CollisionMesh;
+        /// <summary>Set for imported models: the die is rotated onto the rolled face instead of re-texturing it.</summary>
+        public ModelDie Model;
     }
 
     public static class DiceVisuals
@@ -24,7 +26,22 @@ namespace DiceThrower.Game
         {
             string key = kind + "|" + skin.Key;
             DieVisual v;
-            if (Cache.TryGetValue(key, out v) && v.Atlas.Texture != null) return v;
+            if (Cache.TryGetValue(key, out v) && (v.Model != null ? v.Material != null : v.Atlas.Texture != null)) return v;
+
+            ModelDie solid = skin.Model != null ? skin.Model.Solid(kind) : null;
+            if (solid != null)
+            {
+                v = new DieVisual
+                {
+                    Shape = solid.Shape,
+                    Material = skin.Model.MaterialOf(skin.Variant),
+                    CollisionMesh = solid.CollisionMesh,
+                    Model = solid,
+                };
+                Cache[key] = v;
+                return v;
+            }
+
 
             DieShape shape = DieShape.Get(kind);
             DiceAtlas atlas = DiceAtlas.Create(shape, skin);

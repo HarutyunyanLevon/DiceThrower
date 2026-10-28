@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 419af16ad986e14408cbadd767c73950, type: 3}
+  m_Name: DiceModel_cosmic
+  m_EditorClassIdentifier: DiceThrower.Game::DiceThrower.Game.DiceModelSet
+  geometry: {fileID: 4900000, guid: 0af8cd1d79a412045b9a07e71787c92f, type: 3}
+  variants:
+  - name: Teal
+    material: {fileID: 2100000, guid: 46094db301f4a154a927ed8c456dc9a4, type: 2}
+  - name: Green
+    material: {fileID: 2100000, guid: c9f16b952ff55de4a806cd1dfa5ec483, type: 2}
+  - name: Purple
+    material: {fileID: 2100000, guid: 73249a9e4cf030a4cb5344987c7a78dd, type: 2}
+  - name: Crimson
+    material: {fileID: 2100000, guid: 900575372399d874e8fe373383b42e6a, type: 2}
+  - name: Grey
+    material: {fileID: 2100000, guid: 01f6549d8a389e04d8376f47490239c8, type: 2}
+  - name: Navy
+    material: {fileID: 2100000, guid: 932388560004e3441a30756b45adba3a, type: 2}
+  - name: Orange
+    material: {fileID: 2100000, guid: edeb1dee240ac7447ab0a5f8d9ceaaab, type: 2}

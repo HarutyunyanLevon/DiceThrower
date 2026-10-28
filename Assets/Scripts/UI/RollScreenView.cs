@@ -11,7 +11,7 @@ namespace DiceThrower.UI
     /// The app screen and its wiring. It creates the session, the saved data and the views, and connects them:
     /// a SetPanel gesture changes the RollSession, the resulting TrayChange goes to the 3D tray, and the screen is redrawn.
     /// The pieces live in their own classes: SetPanel (one roll set), TabBar, ToastView, HistoryRecorder, TrayFit, PinnedChips,
-    /// the preset editor and the Presets/History/Settings views. Sounds and vibration come from the FeedbackPlayer next to this component.
+    /// the preset editor, ThemeApplier and the Presets/History/Settings views. Sounds and vibration come from the FeedbackPlayer next to this component.
     /// Numbers and texts come from the config assets, looks from the USS files.
     /// </summary>
     [RequireComponent(typeof(UIDocument))]
@@ -51,6 +51,7 @@ namespace DiceThrower.UI
         private PresetsView _presets;
         private HistoryView _history;
         private SettingsView _settings;
+        private ThemeApplier _theme;
 
         // ------------------------------------------------------------------ setup
 
@@ -74,6 +75,8 @@ namespace DiceThrower.UI
             LoadData(limits);
 
             _root = GetComponent<UIDocument>().rootVisualElement;
+            _theme = new ThemeApplier(_root, dataConfig.themes);
+            _theme.Apply(_data.Settings.Theme);
             _safeArea = _root.Q<VisualElement>("safe-area");
             VisualElement screen = _root.Q<VisualElement>("screen");
             VisualElement trayArea = _root.Q<VisualElement>("tray-area");
@@ -171,13 +174,13 @@ namespace DiceThrower.UI
 
             _dialog = new DialogView(_root, dataConfig);
             _editor = new PresetEditorView(_root, config, dataConfig, limits, () => _feedback.Play(FeedbackKind.Blocked));
-            _chips = new PinnedChips(_root, _data, rules.usageWindow, rules.pinnedChipsMax, config.slideThresholdPx,
+            _chips = new PinnedChips(_root, _data, () => _data.Settings.UsageWindowOr(rules.usageWindow), rules.pinnedChipsMax, config.slideThresholdPx,
                                      preset => LoadSetup(preset.Sets, preset.Id));
             _recorder.Recorded += _chips.Refresh; // a throw from a preset can change the chip order
             _presets = new PresetsView(_root, dataConfig, captions, config.slideThresholdPx, _data, _dialog,
                                        preset => LoadSetup(preset.Sets, preset.Id), EditPreset);
             _history = new HistoryView(_root, dataConfig, captions, config.slideThresholdPx, _data, RethrowEntry);
-            _settings = new SettingsView(_root, dataConfig, _data, _dialog, OnSkinChanged, _toast.Show);
+            _settings = new SettingsView(_root, dataConfig, rules, _data, _theme, _dialog, OnSkinChanged, _toast.Show);
         }
 
         private void SelectTab(int index)
