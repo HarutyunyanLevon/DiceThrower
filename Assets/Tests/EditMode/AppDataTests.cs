@@ -164,12 +164,12 @@ namespace DiceThrower.Tests
         {
             AppData data = Open();
             data.Settings.Sound = false;
-            data.Settings.SkinSet = 2;
+            data.Settings.DiceSets.Assign(RollSession.DamageSet, 4);
             data.Save();
 
             AppData reopened = Open();
             Assert.IsFalse(reopened.Settings.Sound);
-            Assert.AreEqual(2, reopened.Settings.SkinSet);
+            Assert.AreEqual(4, reopened.Settings.DiceSets.Get(RollSession.DamageSet));
         }
 
         [Test]

@@ -11,7 +11,7 @@ namespace DiceThrower.EditorTools
     /// <summary>
     /// Turns the baked dice models in Assets/DiceModels (Data/*.json and Textures/*.png, made from the .glb files in Assets/DiceSets)
     /// into Unity assets: texture import settings, one URP Lit material per colour variant, a DiceModelSet per file, one DiceSkin per
-    /// variant, and the skin sets the Settings tab cycles through. Nothing that already exists is overwritten.
+    /// variant, and the list of dice sets the Dice tab offers (every colour variant of every model). Nothing that already exists is overwritten.
     /// </summary>
     public static class DiceModelBuilder
     {
@@ -30,32 +30,12 @@ namespace DiceThrower.EditorTools
             public float[] body, ink;
         }
 
-        /// <summary>A named skin set: the colour variants (by name) of the Attack and Damage dice.</summary>
-        private struct Pair
-        {
-            public string setName, family, attack, damage;
-            public Pair(string setName, string family, string attack, string damage)
-            {
-                this.setName = setName; this.family = family; this.attack = attack; this.damage = damage;
-            }
-        }
-
-        private static readonly Pair[] Pairs =
-        {
-            new Pair("Cosmic Teal & Crimson", "cosmic", "Teal", "Crimson"),
-            new Pair("Cosmic Green & Orange", "cosmic", "Green", "Orange"),
-            new Pair("Cosmic Purple & Navy", "cosmic", "Purple", "Navy"),
-            new Pair("Glow Sky & Red", "glow", "Sky", "Red"),
-            new Pair("Glow Black & White", "glow", "Black", "White"),
-            new Pair("Glow Green & Lavender", "glow", "Green", "Lavender"),
-        };
-
         [MenuItem("DiceThrower/Build Dice Model Sets")]
         public static void Build()
         {
             BuilderAssets.EnsureFolder(MaterialDir);
             var sets = new Dictionary<string, DiceModelSet>();
-            var skins = new Dictionary<string, DiceSkin>(); // key: family/variant
+            var diceSets = new List<DiceSetSpec>();         // every colour variant, in file order
 
             foreach (string jsonPath in Directory.GetFiles(Root + "/Data", "*.json"))
             {
@@ -88,7 +68,7 @@ namespace DiceThrower.EditorTools
                     VariantJson v = file.variants[i];
                     int index = i;
                     string skinPath = ConfigDir + "/Skin_" + file.family + "_" + v.name + ".asset";
-                    skins[file.family + "/" + v.name] = BuilderAssets.GetOrCreate<DiceSkin>(skinPath, s =>
+                    DiceSkin skin = BuilderAssets.GetOrCreate<DiceSkin>(skinPath, s =>
                     {
                         var so = new SerializedObject(s);
                         so.FindProperty("body").colorValue = ToColor(v.body);
@@ -97,30 +77,35 @@ namespace DiceThrower.EditorTools
                         so.FindProperty("variant").intValue = index;
                         so.ApplyModifiedPropertiesWithoutUndo();
                     });
+                    diceSets.Add(new DiceSetSpec { name = Capitalize(file.family) + " " + v.name, skin = skin });
                 }
             }
 
-            AddSkinSets(skins);
+            AddDiceSets(diceSets);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-            Debug.Log("DiceThrower: dice model sets built (" + sets.Count + " models, " + skins.Count + " skins). They are in the Settings tab's skin list.");
+            Debug.Log("DiceThrower: dice model sets built (" + sets.Count + " models, " + diceSets.Count + " skins). The Dice tab lists " + diceSets.Count + " dice sets. Next: DiceThrower > Render Dice Sprite Atlases.");
         }
 
-        private static void AddSkinSets(Dictionary<string, DiceSkin> skins)
+        /// <summary>Appends the dice sets that the Dice tab does not list yet; the saved choice is an index, so the existing order never changes.</summary>
+        private static void AddDiceSets(List<DiceSetSpec> found)
         {
             var config = AssetDatabase.LoadAssetAtPath<DataUiConfig>(DataUiConfigPath);
             if (config == null) { Debug.LogWarning("DiceThrower: " + DataUiConfigPath + " not found; run DiceThrower > Build Config, Prefabs and Scene first."); return; }
 
-            var list = new List<SkinSetSpec>(config.skinSets);
-            foreach (Pair p in Pairs)
+            var list = new List<DiceSetSpec>(config.diceSets);
+            list.RemoveAll(d => d == null || d.skin == null); // a skin deleted by hand
+            foreach (DiceSetSpec spec in found)
             {
-                DiceSkin attack, damage;
-                if (!skins.TryGetValue(p.family + "/" + p.attack, out attack) || !skins.TryGetValue(p.family + "/" + p.damage, out damage)) continue;
-                if (list.Exists(s => s.name == p.setName)) continue;
-                list.Add(new SkinSetSpec { name = p.setName, skins = new[] { attack, damage } });
+                if (!list.Exists(d => d.skin == spec.skin)) list.Add(spec);
             }
-            config.skinSets = list.ToArray();
+            config.diceSets = list.ToArray();
             EditorUtility.SetDirty(config);
+        }
+
+        private static string Capitalize(string text)
+        {
+            return text.Length == 0 ? text : char.ToUpperInvariant(text[0]) + text.Substring(1);
         }
 
         // ------------------------------------------------------------------ materials and textures

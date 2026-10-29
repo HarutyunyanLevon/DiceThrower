@@ -36,6 +36,9 @@ namespace DiceThrower.Core
             DieType.D4, DieType.D6, DieType.D8, DieType.D10, DieType.D12, DieType.D20, DieType.D100
         };
 
+        /// <summary>The die types the Attack row offers until the player changes the list.</summary>
+        public static readonly DieType[] DefaultAttackTypes = { DieType.D20, DieType.D4, DieType.D6, DieType.D100 };
+
         /// <summary>Highest value the logical die can roll (d% = 100).</summary>
         public static int Sides(DieType t)
         {

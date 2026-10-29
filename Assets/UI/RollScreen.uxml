@@ -4,21 +4,6 @@
     <ui:Style src="Pages.uss" />
     <ui:VisualElement name="safe-area" class="safe-area">
     <ui:VisualElement name="screen" class="screen">
-        <ui:VisualElement name="tabbar" class="tabbar">
-            <ui:VisualElement name="tab-roll" class="tab tab--active">
-                <ui:Label text="Roll" class="lbl tab__text" />
-            </ui:VisualElement>
-            <ui:VisualElement name="tab-presets" class="tab">
-                <ui:Label text="Presets" class="lbl tab__text" />
-            </ui:VisualElement>
-            <ui:VisualElement name="tab-history" class="tab">
-                <ui:Label text="History" class="lbl tab__text" />
-            </ui:VisualElement>
-            <ui:VisualElement name="tab-settings" class="tab">
-                <ui:Label text="Settings" class="lbl tab__text" />
-            </ui:VisualElement>
-        </ui:VisualElement>
-
         <ui:VisualElement name="page-roll" class="page">
             <ui:VisualElement name="headers" class="headers" />
             <ui:VisualElement name="tray-wrap" class="tray-wrap">
@@ -43,6 +28,12 @@
         <ui:VisualElement name="page-history" class="page">
             <ui:Label name="history-empty" text="" class="lbl empty-note" />
             <ui:ScrollView name="history-list" class="list" horizontal-scroller-visibility="Hidden" />
+        </ui:VisualElement>
+
+        <ui:VisualElement name="page-dice" class="page">
+            <ui:VisualElement name="dice-slots" class="dice-slots" />
+            <ui:ScrollView name="dice-grid" class="dice-grid" horizontal-scroller-visibility="Hidden" />
+            <ui:VisualElement name="dice-actions" class="dice-actions" />
         </ui:VisualElement>
 
         <ui:VisualElement name="page-settings" class="page">
@@ -76,10 +67,6 @@
                     </ui:VisualElement>
                 </ui:VisualElement>
             </ui:VisualElement>
-            <ui:VisualElement name="row-skin" class="setting">
-                <ui:Label text="Dice skin" class="lbl setting__label" />
-                <ui:Label name="skin-value" text="" class="lbl setting__value" />
-            </ui:VisualElement>
             <ui:VisualElement name="row-theme" class="setting">
                 <ui:Label text="Theme" class="lbl setting__label" />
                 <ui:Label name="theme-value" text="" class="lbl setting__value" />
@@ -98,6 +85,24 @@
             </ui:VisualElement>
             <ui:VisualElement name="btn-clear-history" class="action action--danger">
                 <ui:Label text="Clear history" class="lbl action__text" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="tabbar" class="tabbar">
+            <ui:VisualElement name="tab-presets" class="tab">
+                <ui:Label text="Presets" class="lbl tab__text" />
+            </ui:VisualElement>
+            <ui:VisualElement name="tab-history" class="tab">
+                <ui:Label text="History" class="lbl tab__text" />
+            </ui:VisualElement>
+            <ui:VisualElement name="tab-roll" class="tab tab--roll tab--active">
+                <ui:Label text="Roll" class="lbl tab__text tab__text--roll" />
+            </ui:VisualElement>
+            <ui:VisualElement name="tab-dice" class="tab">
+                <ui:Label text="Dice" class="lbl tab__text" />
+            </ui:VisualElement>
+            <ui:VisualElement name="tab-settings" class="tab">
+                <ui:Label text="Settings" class="lbl tab__text" />
             </ui:VisualElement>
         </ui:VisualElement>
 

@@ -19,11 +19,8 @@ namespace DiceThrower.EditorTools
         public const string CameraFit = ConfigDir + "/CameraFitConfig.asset";
         public const string Rules = ConfigDir + "/RulesConfig.asset";
         public const string UiConfig = ConfigDir + "/RollUiConfig.asset";
-        public const string AttackSkin = ConfigDir + "/Skin_Attack.asset";
-        public const string DamageSkin = ConfigDir + "/Skin_Damage.asset";
-        public const string ObsidianSkin = ConfigDir + "/Skin_Attack_Obsidian.asset";
-        public const string EmeraldSkin = ConfigDir + "/Skin_Damage_Emerald.asset";
         public const string DataUiConfig = ConfigDir + "/DataUiConfig.asset";
+        public const string PreviewConfig = ConfigDir + "/DicePreviewConfig.asset";
         public const string FeedbackConfig = ConfigDir + "/FeedbackConfig.asset";
         public const string DiePrefab = PrefabDir + "/Die.prefab";
         public const string TrayPrefab = PrefabDir + "/DiceTray.prefab";
@@ -46,17 +43,6 @@ namespace DiceThrower.EditorTools
         // die rigidbody and surface
         public const float DieMass = 1f, LinearDamping = 0.05f, AngularDamping = 0.15f, SleepThreshold = 0.3f;
         public const float Bounciness = 0.25f, DynamicFriction = 0.45f, StaticFriction = 0.55f;
-
-        // dice skins
-        public static readonly Color AttackBody = new Color32(239, 230, 208, 255);
-        public static readonly Color AttackInk = new Color32(26, 18, 8, 255);
-        public static readonly Color DamageBody = new Color32(168, 50, 31, 255);
-        public static readonly Color DamageInk = Color.white;
-        public static readonly Color ObsidianBody = new Color32(38, 40, 52, 255);
-        public static readonly Color ObsidianInk = new Color32(224, 178, 90, 255);
-        public static readonly Color EmeraldBody = new Color32(34, 110, 72, 255);
-        public static readonly Color EmeraldInk = new Color32(244, 230, 200, 255);
-        public const string IvorySetName = "Ivory & Crimson", ObsidianSetName = "Obsidian & Emerald";
 
         // themes
         public const string TavernThemeName = "Tavern & Leather", MoonlightThemeName = "Moonlight";

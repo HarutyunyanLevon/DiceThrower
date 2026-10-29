@@ -32,6 +32,13 @@ namespace DiceThrower.UI
             _settleUntil = Time.unscaledTime + config.settleSeconds;
         }
 
+        /// <summary>The tray's size or the scene around it changed: fit the camera again for a while, as after a screen change.</summary>
+        public void Invalidate()
+        {
+            _settleUntil = Time.unscaledTime + _config.settleSeconds;
+            _fitted = false;
+        }
+
         public void Tick()
         {
             Rect rootBound = _root.worldBound;
@@ -71,7 +78,7 @@ namespace DiceThrower.UI
                 1f - area.yMax / root.height + inset, // viewport y runs bottom-up, UI y top-down
                 area.width / root.width - 2f * inset,
                 area.height / root.height - 2f * inset);
-            TrayCamera.Fit(_cam, _tray.transform.position, _tray.Extent, _config, slot);
+            TrayCamera.Fit(_cam, _tray.transform.position, _tray.Extent, _config, slot, _tray.Height);
             _fitRoot = root;
             _fitAspect = _cam.aspect;
             _fitted = true;

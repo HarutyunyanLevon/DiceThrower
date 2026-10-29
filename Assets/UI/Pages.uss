@@ -69,13 +69,12 @@
 /* one rolled set inside a history row */
 .hist-set {
     flex-direction: row;
-    align-items: flex-end;
+    align-items: center;
     margin-top: 2px;
 }
 .hist-set__cap {
     width: 64px;
     flex-shrink: 0;
-    margin-bottom: 3px;
     font-size: 11px;
     color: var(--muted);
     -unity-font-style: bold;
@@ -89,16 +88,22 @@
 }
 .hist-set__total--nat20 { color: var(--accent); }
 .hist-set__total--nat1 { color: var(--adv-d); }
+/* formula over breakdown, to the right of the total */
 .hist-set__detail {
+    flex-grow: 1;
     flex-shrink: 1;
+    min-width: 0;
     margin-left: 6px;
-    margin-bottom: 3px;
+}
+.hist-set__formula,
+.hist-set__breakdown {
     font-size: 12px;
     color: var(--muted);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
+.hist-set__formula { -unity-font-style: bold; }
 
 /* ---------- settings ---------- */
 .setting {
@@ -214,10 +219,143 @@
 .editor-sets { margin-bottom: 10px; }
 .editor-sets .total,
 .editor-sets .breakdown { display: none; }
-.editor-sets .set-header { margin-bottom: 0; }
+.editor-sets .set-header {
+    height: 46px;
+    margin-bottom: 0;
+}
 .dialog__btn-text {
     font-size: 16px;
     -unity-font-style: bold;
     -unity-text-align: middle-center;
 }
 .action--primary .dialog__btn-text { color: var(--accent-ink); }
+
+/* ---------- Dice tab: the two slots, the grid of dice sets and the Use buttons ---------- */
+.dice-slots {
+    flex-direction: row;
+    flex-shrink: 0;
+    margin-bottom: 6px;
+}
+.dice-slot {
+    flex-grow: 1;
+    flex-basis: 0;
+    margin: 0 3px;
+    padding: 8px 6px;
+    align-items: center;
+    background-color: var(--panel);
+    border-width: 2px;
+    border-color: var(--panel-edge);
+    border-radius: 18px;
+}
+.dice-slot.dice-row--atk { border-color: var(--atk-edge); }
+.dice-slot.dice-row--dmg { border-color: var(--dmg-edge); }
+.dice-slot__caption {
+    font-size: 11px;
+    color: var(--muted);
+    -unity-font-style: bold;
+    letter-spacing: 1px;
+}
+.dice-slot__picture {
+    width: 116px;
+    height: 116px;
+    margin: 4px 0;
+    justify-content: center;
+    align-items: center;
+    -unity-background-scale-mode: scale-to-fit;
+}
+.dice-slot__picture .die-icon {
+    width: 96px;
+    height: 96px;
+}
+.dice-slot__name {
+    max-width: 100%;
+    font-size: 14px;
+    color: var(--accent);
+    -unity-font-style: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dice-grid { flex-grow: 1; }
+.dice-grid .unity-scroll-view__content-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.dice-card {
+    width: 50%;
+    padding: 3px;
+}
+.dice-card__body {
+    flex-grow: 1;
+    min-height: 112px;
+    padding: 8px 6px;
+    align-items: center;
+    background-color: var(--panel);
+    border-width: 2px;
+    border-color: var(--panel-edge);
+    border-radius: 16px;
+}
+.dice-card.pressed .dice-card__body { background-color: var(--btn-edge); }
+.dice-card--selected .dice-card__body { border-color: var(--accent); }
+.dice-card__picture {
+    width: 64px;
+    height: 64px;
+    justify-content: center;
+    align-items: center;
+}
+.dice-card__picture .die-icon {
+    width: 60px;
+    height: 60px;
+}
+.dice-card__name {
+    max-width: 100%;
+    margin-top: 2px;
+    font-size: 13px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.dice-card__tag {
+    margin-top: 3px;
+    padding: 1px 8px;
+    font-size: 10px;
+    letter-spacing: 1px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    border-radius: 8px;
+    background-color: var(--accent);
+    color: var(--accent-ink);
+}
+.dice-card__tag.dice-row--atk { background-color: var(--atk); color: var(--atk-ink); }
+.dice-card__tag.dice-row--dmg { background-color: var(--dmg); color: var(--dmg-ink); }
+
+/* the dN text is for the dice rows; the big pictures here need none */
+.dice-slot .die-icon__text,
+.dice-card .die-icon__text { display: none; }
+
+.dice-actions {
+    flex-direction: row;
+    flex-shrink: 0;
+    height: 44px;
+    margin-top: 6px;
+    margin-bottom: 4px;
+}
+.dice-use {
+    flex-grow: 1;
+    flex-basis: 0;
+    margin: 0 3px;
+    border-width: 2px;
+    border-color: var(--btn-edge);
+}
+.dice-use.dice-row--atk { background-color: var(--atk); }
+.dice-use.dice-row--dmg { background-color: var(--dmg); }
+.dice-use__text {
+    font-size: 15px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+}
+.dice-use.dice-row--atk .dice-use__text { color: var(--atk-ink); }
+.dice-use.dice-row--dmg .dice-use__text { color: var(--dmg-ink); }

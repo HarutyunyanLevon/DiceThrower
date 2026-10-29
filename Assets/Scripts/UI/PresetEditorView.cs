@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine.UIElements;
 using DiceThrower.Core;
+using DiceThrower.Game;
 
 namespace DiceThrower.UI
 {
@@ -22,8 +23,10 @@ namespace DiceThrower.UI
         private readonly TextField _name;
         private Action<string, RollSetConfig[]> _onOk;
 
+        /// <param name="attackRow">The die types of the Attack row; the same list as on the Roll tab.</param>
+        /// <param name="skinOf">The dice set of a roll set (the same as on the Roll tab), for the die buttons' pictures.</param>
         /// <param name="onBlocked">A dice limit was hit (the view flashes the count, the caller adds feedback).</param>
-        public PresetEditorView(VisualElement uiRoot, RollUiConfig config, DataUiConfig data, DiceLimits limits, Action onBlocked)
+        public PresetEditorView(VisualElement uiRoot, RollUiConfig config, DataUiConfig data, DiceLimits limits, DiceRowTypes attackRow, Func<int, DiceSkin> skinOf, Action onBlocked)
         {
             _root = uiRoot.Q<VisualElement>("editor");
             _title = uiRoot.Q<Label>("editor-title");
@@ -35,11 +38,13 @@ namespace DiceThrower.UI
 
             _session = new RollSession(new SystemRng(), limits);
             var overlay = new SliderOverlay(_root, config.sliderTrackPad); // inside the popup, so it is drawn above it
+            var picker = new DiePicker(_root);
             VisualElement sets = uiRoot.Q<VisualElement>("editor-sets");
             for (int s = 0; s < _panels.Length; s++)
             {
                 int set = s;
-                _panels[s] = new SetPanel(s, _session, config, overlay, change => Refresh(), (type, result) =>
+                DiceRowTypes rowTypes = s == RollSession.AttackSet ? attackRow : null;
+                _panels[s] = new SetPanel(s, _session, config, overlay, rowTypes, picker, () => skinOf(set), change => Refresh(), (type, result) =>
                 {
                     _panels[set].FlashBadge(type);
                     onBlocked();

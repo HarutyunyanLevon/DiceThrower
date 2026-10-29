@@ -101,7 +101,7 @@ namespace DiceThrower.EditorTools
         }
 
         /// <summary>Adds what the RollScreen prefab is missing (the FeedbackPlayer) and fills every empty config reference. References you set yourself are left alone.</summary>
-        internal static void WireScreenPrefab(RollUiConfig ui, RulesConfig rules, CameraFitConfig cameraFit, DataUiConfig data, FeedbackConfig feedback)
+        internal static void WireScreenPrefab(RollUiConfig ui, RulesConfig rules, CameraFitConfig cameraFit, DataUiConfig data, DicePreviewConfig preview, FeedbackConfig feedback)
         {
             GameObject root = PrefabUtility.LoadPrefabContents(BuilderPaths.ScreenPrefab);
             try
@@ -111,6 +111,7 @@ namespace DiceThrower.EditorTools
                 changed |= BuilderAssets.AssignIfEmpty(so, "rules", rules);
                 changed |= BuilderAssets.AssignIfEmpty(so, "cameraFit", cameraFit);
                 changed |= BuilderAssets.AssignIfEmpty(so, "dataConfig", data);
+                changed |= BuilderAssets.AssignIfEmpty(so, "previewConfig", preview);
                 so.ApplyModifiedPropertiesWithoutUndo();
 
                 FeedbackPlayer player = root.GetComponent<FeedbackPlayer>();

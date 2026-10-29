@@ -16,7 +16,8 @@ namespace DiceThrower.Game
         [SerializeField] private TrayConfig config;
         [SerializeField] private DieBody diePrefab;
         [SerializeField, Tooltip("URP Lit material that the numbered dice are cloned from.")] private Material dieMaterial;
-        [SerializeField, Tooltip("The visible floor slab. Its scale is the tray's outer size, which the camera fits to the screen.")] private Transform floor;
+        [SerializeField, Tooltip("The floor slab, or for the leather trays an invisible marker. Its x / z scale is the tray's outer size, which the camera fits to the screen.")] private Transform floor;
+        [SerializeField, Tooltip("How high the rim stands above the floor. The camera fit keeps the rim in view too. 0 = ignore.")] private float height;
         [SerializeField, Tooltip("Parent of the spawned dice.")] private Transform diceRoot;
 
         private readonly List<DieBody> _dice = new List<DieBody>();
@@ -35,6 +36,22 @@ namespace DiceThrower.Game
 
         /// <summary>Every die lies still (or was set by hand) and shows its number.</summary>
         public event Action Settled;
+
+        /// <summary>Height of the rim above the floor (0 when not set).</summary>
+        public float Height { get { return height; } }
+
+        /// <summary>The marker whose x / z scale is the tray's outer size.</summary>
+        public Transform Floor { get { return floor; } }
+
+        /// <summary>Parent of the spawned dice.</summary>
+        public Transform DiceRoot { get { return diceRoot; } }
+
+        /// <summary>A theme's scene brings its own play surface: the marker that gives the outer size and the rim height.</summary>
+        public void SetSurface(Transform floorMarker, float rimHeight)
+        {
+            floor = floorMarker;
+            height = rimHeight;
+        }
 
         /// <summary>Outer width (x) and depth (y) of the tray, rails included.</summary>
         public Vector2 Extent

@@ -7,7 +7,7 @@ namespace DiceThrower.UI
 {
     /// <summary>
     /// The row of preset chips above the Roll tab's buttons. Presets used most in the last few throws come first
-    /// (see PresetUsage). Tap a chip to load the preset and throw it; the row scrolls sideways when it does not fit.
+    /// (see PresetUsage). A chip shows the preset's name and its formulas. Tap a chip to load the preset and throw it; the row scrolls sideways when it does not fit.
     /// </summary>
     public sealed class PinnedChips
     {
@@ -41,6 +41,8 @@ namespace DiceThrower.UI
             var chip = new VisualElement();
             chip.AddToClassList("chip");
             chip.Add(UiFactory.Label(preset.Name, "chip__text"));
+            string formula = RollFormat.Summary(preset.Sets);
+            if (formula.Length > 0) chip.Add(UiFactory.Label(formula, "chip__formula"));
             ListTap.Attach(chip, () => _onTap(preset), _tapSlopPx, false); // a drag scrolls the row instead
             return chip;
         }

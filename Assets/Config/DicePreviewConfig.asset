@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36a04095ea2ddce42b96e078cd1742a4, type: 3}
+  m_Name: DicePreviewConfig
+  m_EditorClassIdentifier: DiceThrower.Game::DiceThrower.Game.DicePreviewConfig
+  textureSize: 256
+  spinDegreesPerSecond: 40
+  spriteSize: 128
+  atlasFolder: Assets/DiceModels/Atlases
+  stagePosition: {x: 0, y: 500, z: 0}
+  fieldOfView: 25
+  framePadding: 1.12
+  antiAliasing: 4
+  faceTiltDegrees: {x: -20, y: 25}
+  lightEuler: {x: 55, y: -25, z: 0}
+  lightIntensity: 1.1

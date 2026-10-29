@@ -3,7 +3,6 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
-using DiceThrower.Game;
 using Object = UnityEngine.Object;
 
 namespace DiceThrower.EditorTools
@@ -78,14 +77,6 @@ namespace DiceThrower.EditorTools
                 panel.themeStyleSheet = AssetDatabase.LoadAssetAtPath<ThemeStyleSheet>(AssetDatabase.GUIDToAssetPath(themes[0]));
             AssetDatabase.CreateAsset(panel, BuilderPaths.PanelSettings);
             return panel;
-        }
-
-        public static void SetSkin(DiceSkin skin, Color body, Color ink)
-        {
-            var so = new SerializedObject(skin);
-            so.FindProperty("body").colorValue = body;
-            so.FindProperty("ink").colorValue = ink;
-            so.ApplyModifiedPropertiesWithoutUndo();
         }
 
         public static bool AssignIfEmpty(SerializedObject so, string field, Object value)

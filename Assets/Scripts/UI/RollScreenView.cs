@@ -11,7 +11,7 @@ namespace DiceThrower.UI
     /// The app screen and its wiring. It creates the session, the saved data and the views, and connects them:
     /// a SetPanel gesture changes the RollSession, the resulting TrayChange goes to the 3D tray, and the screen is redrawn.
     /// The pieces live in their own classes: SetPanel (one roll set), TabBar, ToastView, HistoryRecorder, TrayFit, PinnedChips,
-    /// the preset editor, ThemeApplier and the Presets/History/Settings views. Sounds and vibration come from the FeedbackPlayer next to this component.
+    /// the preset editor, ThemeApplier and the Presets/History/Dice/Settings views. Sounds and vibration come from the FeedbackPlayer next to this component.
     /// Numbers and texts come from the config assets, looks from the USS files.
     /// </summary>
     [RequireComponent(typeof(UIDocument))]
@@ -22,15 +22,16 @@ namespace DiceThrower.UI
         [SerializeField] private RulesConfig rules;
         [SerializeField] private CameraFitConfig cameraFit;
         [SerializeField] private DataUiConfig dataConfig;
+        [SerializeField, Tooltip("Look of the live dice on the Dice tab. Optional: without it the slots show still pictures.")] private DicePreviewConfig previewConfig;
 
         [Header("Scene objects (found automatically when left empty)")]
         [SerializeField] private Camera sceneCamera;
         [SerializeField] private DiceTray tray;
 
         // element names in RollScreen.uxml, in tab order
-        private static readonly string[] TabNames = { "tab-roll", "tab-presets", "tab-history", "tab-settings" };
-        private static readonly string[] PageNames = { "page-roll", "page-presets", "page-history", "page-settings" };
-        private const int TabRoll = 0, TabPresets = 1, TabHistory = 2, TabSettings = 3;
+        private static readonly string[] TabNames = { "tab-roll", "tab-presets", "tab-history", "tab-dice", "tab-settings" };
+        private static readonly string[] PageNames = { "page-roll", "page-presets", "page-history", "page-dice", "page-settings" };
+        private const int TabRoll = 0, TabPresets = 1, TabHistory = 2, TabDice = 3, TabSettings = 4;
         private const string OpaqueClass = "safe-area--opaque"; // hides the 3D tray behind the list tabs
 
         private RollSession _session;
@@ -50,8 +51,10 @@ namespace DiceThrower.UI
         private PinnedChips _chips;
         private PresetsView _presets;
         private HistoryView _history;
+        private DiceTabView _diceTab;
         private SettingsView _settings;
         private ThemeApplier _theme;
+        private ThemeSceneHost _themeHost;
         private readonly List<DieReading> _readings = new List<DieReading>();
 
         // ------------------------------------------------------------------ setup
@@ -64,7 +67,7 @@ namespace DiceThrower.UI
             if (!ConfigIsValid(cam))
             {
                 Debug.LogError("RollScreenView: all four configs, a camera, a DiceTray and a FeedbackPlayer with its config are required. "
-                               + "The UI config needs exactly " + RollSession.SetCount + " sets and every skin set one skin per roll set. "
+                               + "The UI config needs exactly " + RollSession.SetCount + " sets and the data config at least that many dice sets (run DiceThrower > Build Dice Model Sets). "
                                + "Run the menu DiceThrower > Build Config, Prefabs and Scene to fill in what is missing.", this);
                 enabled = false;
                 return;
@@ -77,7 +80,10 @@ namespace DiceThrower.UI
             ApplyThrowSettings();
 
             _root = GetComponent<UIDocument>().rootVisualElement;
-            _theme = new ThemeApplier(_root, dataConfig.themes);
+            _themeHost = _tray.GetComponent<ThemeSceneHost>();
+            if (_themeHost == null) _themeHost = _tray.gameObject.AddComponent<ThemeSceneHost>();
+            _themeHost.Bind(_tray, cam);
+            _theme = new ThemeApplier(_root, dataConfig.themes, _themeHost);
             _theme.Apply(_data.Settings.Theme);
             _safeArea = _root.Q<VisualElement>("safe-area");
             VisualElement screen = _root.Q<VisualElement>("screen");
@@ -86,9 +92,10 @@ namespace DiceThrower.UI
             _toast = new ToastView(_root.Q<Label>("toast"), config.toastSeconds);
             _recorder = new HistoryRecorder(_root, _session, _data, dataConfig.historyCommitDelaySeconds);
             _fit = new TrayFit(_root, _safeArea, trayArea, cam, _tray, cameraFit);
+            _themeHost.Changed += _fit.Invalidate; // another theme can bring another surface size
             _tabs = new TabBar(_root, TabNames, PageNames, SelectTab);
 
-            BuildRollTab(new SliderOverlay(screen, config.sliderTrackPad));
+            BuildRollTab(new SliderOverlay(screen, config.sliderTrackPad), new DiePicker(screen));
             BuildDataTabs(limits);
             PressGesture.Tappable(trayArea, OnTrayTap); // while dice roll: set them now; otherwise rethrow everything
 
@@ -112,12 +119,16 @@ namespace DiceThrower.UI
             _data = new AppData(new SaveFile(Path.Combine(Application.persistentDataPath, dataConfig.saveFileName)), limits);
             if (_data.LoadError != null) Debug.LogWarning("DiceThrower: the save file could not be read, starting fresh. " + _data.LoadError.Message, this);
             _data.SaveFailed += e => Debug.LogWarning("DiceThrower: saving failed. " + e.Message, this);
-            ApplySkinSet();
+            _data.Settings.AttackDice.Changed += _data.Save; // the "+" button and a long press change this global list
+            _data.Settings.DiceSets.Fit(dataConfig.diceSets.Length); // a saved choice may point past the list
+            _data.Settings.DiceSets.Changed += _data.Save;           // the Dice tab changes it
+            ApplyDiceSets();
         }
 
         private void Update()
         {
             if (_fit != null) _fit.Tick();
+            if (_diceTab != null) _diceTab.Tick(Time.deltaTime);
         }
 
         private void OnApplicationPause(bool paused)
@@ -128,6 +139,8 @@ namespace DiceThrower.UI
         private void OnDestroy()
         {
             if (_recorder != null) _recorder.Flush();
+            if (_diceTab != null) _diceTab.Dispose();
+            if (_themeHost != null && _fit != null) _themeHost.Changed -= _fit.Invalidate;
             if (_tray != null && _feedback != null)
             {
                 _tray.DieHit -= _feedback.PlayHit;
@@ -137,7 +150,7 @@ namespace DiceThrower.UI
 
         // ------------------------------------------------------------------ building
 
-        private void BuildRollTab(SliderOverlay overlay)
+        private void BuildRollTab(SliderOverlay overlay, DiePicker picker)
         {
             VisualElement headers = _root.Q<VisualElement>("headers");
             VisualElement rows = _root.Q<VisualElement>("rows");
@@ -145,7 +158,9 @@ namespace DiceThrower.UI
             for (int s = 0; s < _panels.Length; s++)
             {
                 int set = s;
-                _panels[s] = new SetPanel(s, _session, config, overlay, Apply, (type, result) => ReportBlocked(set, type, result), Refresh);
+                DiceRowTypes rowTypes = s == RollSession.AttackSet ? _data.Settings.AttackDice : null;
+                _panels[s] = new SetPanel(s, _session, config, overlay, rowTypes, picker, () => SkinOf(set), Apply,
+                                          (type, result) => ReportBlocked(set, type, result), Refresh);
                 headers.Add(_panels[s].Header);
                 rows.Add(_panels[s].Row);
             }
@@ -175,14 +190,15 @@ namespace DiceThrower.UI
             for (int s = 0; s < captions.Length; s++) captions[s] = config.sets[s].caption;
 
             _dialog = new DialogView(_root, dataConfig);
-            _editor = new PresetEditorView(_root, config, dataConfig, limits, () => _feedback.Play(FeedbackKind.Blocked));
+            _editor = new PresetEditorView(_root, config, dataConfig, limits, _data.Settings.AttackDice, SkinOf, () => _feedback.Play(FeedbackKind.Blocked));
             _chips = new PinnedChips(_root, _data, () => _data.Settings.UsageWindowOr(rules.usageWindow), rules.pinnedChipsMax, config.slideThresholdPx,
                                      preset => LoadSetup(preset.Sets, preset.Id));
             _recorder.Recorded += _chips.Refresh; // a throw from a preset can change the chip order
             _presets = new PresetsView(_root, dataConfig, captions, config.slideThresholdPx, _data, _dialog,
                                        preset => LoadSetup(preset.Sets, preset.Id), EditPreset);
             _history = new HistoryView(_root, dataConfig, captions, config.slideThresholdPx, _data, RethrowEntry);
-            _settings = new SettingsView(_root, dataConfig, rules, _data, _theme, _dialog, OnSkinChanged, ApplyThrowSettings, _toast.Show);
+            _diceTab = new DiceTabView(_root, dataConfig, config, previewConfig, _data.Settings.DiceSets, OnDiceSetChanged);
+            _settings = new SettingsView(_root, dataConfig, rules, _data, _theme, _dialog, ApplyThrowSettings, _toast.Show);
         }
 
         private void SelectTab(int index)
@@ -190,10 +206,12 @@ namespace DiceThrower.UI
             _recorder.Flush(); // the History tab must show the throw you just made
             _tabs.Select(index);
             _safeArea.EnableInClassList(OpaqueClass, index != TabRoll);
+            _diceTab.SetVisible(index == TabDice);
 
             if (index == TabRoll) _chips.Refresh(); // presets may have been saved, edited or deleted meanwhile
             else if (index == TabPresets) _presets.Refresh();
             else if (index == TabHistory) _history.Refresh();
+            else if (index == TabDice) _diceTab.Refresh();
             else if (index == TabSettings) _settings.Refresh();
         }
 
@@ -272,16 +290,25 @@ namespace DiceThrower.UI
             });
         }
 
-        private void ApplySkinSet()
+        /// <summary>The skin (dice set) a roll set throws with.</summary>
+        private DiceSkin SkinOf(int rollSet)
         {
-            int index = Mathf.Clamp(_data.Settings.SkinSet, 0, dataConfig.skinSets.Length - 1);
-            _skins = dataConfig.skinSets[index].skins;
+            return dataConfig.SkinOf(_data.Settings.DiceSets.Get(rollSet));
         }
 
-        private void OnSkinChanged()
+        /// <summary>Reads the chosen dice sets into the skins the tray spawns dice with (dice already in the tray keep theirs).</summary>
+        private void ApplyDiceSets()
         {
-            ApplySkinSet();
-            _toast.Show(dataConfig.skinChangedToast);
+            if (_skins == null) _skins = new DiceSkin[RollSession.SetCount];
+            for (int s = 0; s < _skins.Length; s++) _skins[s] = SkinOf(s);
+        }
+
+        /// <summary>The Dice tab gave a roll set another dice set (already saved).</summary>
+        private void OnDiceSetChanged()
+        {
+            ApplyDiceSets();
+            Refresh(); // the dice rows show the new pictures
+            _toast.Show(dataConfig.diceSetChangedToast);
         }
 
         private void Apply(TrayChange change)

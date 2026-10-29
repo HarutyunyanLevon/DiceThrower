@@ -10,6 +10,9 @@ namespace DiceThrower.Core
     /// </summary>
     public static class SaveCodec
     {
+        /// <summary>Save key of each roll set's dice set. The old "skinSet" key is not read: a save without these keys starts with the first sets.</summary>
+        private static readonly string[] DiceSetKeys = { "attackSet", "damageSet" };
+
         public static string Serialize(SaveData data)
         {
             return Json.Write(WriteData(data));
@@ -29,11 +32,12 @@ namespace DiceThrower.Core
             Dictionary<string, object> settings = GetObject(root, "settings");
             data.Settings.Sound = GetBool(settings, "sound", data.Settings.Sound);
             data.Settings.Haptics = GetBool(settings, "haptics", data.Settings.Haptics);
-            data.Settings.SkinSet = Math.Max(0, GetInt(settings, "skinSet", data.Settings.SkinSet));
+            data.Settings.DiceSets.SetAll(ReadDiceSets(settings));
             data.Settings.Theme = Math.Max(0, GetInt(settings, "theme", data.Settings.Theme));
             data.Settings.UsageWindow = Math.Max(0, GetInt(settings, "usageWindow", data.Settings.UsageWindow));
             data.Settings.PhysicsDice = GetBool(settings, "physicsDice", data.Settings.PhysicsDice);
             data.Settings.SettleSeconds = Math.Max(0, GetInt(settings, "settleSeconds", data.Settings.SettleSeconds));
+            data.Settings.AttackDice.SetAll(ReadDieTypes(settings, "attackDice", DieInfo.DefaultAttackTypes));
 
             foreach (object item in GetList(root, "presets"))
             {
@@ -56,11 +60,13 @@ namespace DiceThrower.Core
             {
                 { "sound", data.Settings.Sound },
                 { "haptics", data.Settings.Haptics },
-                { "skinSet", data.Settings.SkinSet },
+                { DiceSetKeys[RollSession.AttackSet], data.Settings.DiceSets.Get(RollSession.AttackSet) },
+                { DiceSetKeys[RollSession.DamageSet], data.Settings.DiceSets.Get(RollSession.DamageSet) },
                 { "theme", data.Settings.Theme },
                 { "usageWindow", data.Settings.UsageWindow },
                 { "physicsDice", data.Settings.PhysicsDice },
                 { "settleSeconds", data.Settings.SettleSeconds },
+                { "attackDice", WriteDieTypes(data.Settings.AttackDice.Types) },
             };
 
             var presets = new List<object>();
@@ -88,6 +94,13 @@ namespace DiceThrower.Core
                 { "presets", presets },
                 { "history", history },
             };
+        }
+
+        private static List<object> WriteDieTypes(IReadOnlyList<DieType> types)
+        {
+            var list = new List<object>();
+            for (int i = 0; i < types.Count; i++) list.Add(types[i].ToString());
+            return list;
         }
 
         /// <summary>Only dice types that are actually in the pool are written.</summary>
@@ -249,9 +262,36 @@ namespace DiceThrower.Core
 
         private static bool TryGetEnum<T>(Dictionary<string, object> d, string key, out T value) where T : struct
         {
+            return TryParseEnum(Get(d, key) as string, out value);
+        }
+
+        private static bool TryParseEnum<T>(string name, out T value) where T : struct
+        {
             value = default(T);
-            string name = Get(d, key) as string;
             return name != null && Enum.TryParse(name, out value) && Enum.IsDefined(typeof(T), value);
+        }
+
+        /// <summary>One dice set index per roll set; a missing or invalid value stays the roll set's own index (Attack 0, Damage 1).</summary>
+        private static List<int> ReadDiceSets(Dictionary<string, object> settings)
+        {
+            var values = new List<int>();
+            for (int s = 0; s < RollSession.SetCount; s++)
+                values.Add(Math.Max(0, GetInt(settings, DiceSetKeys[s], s)));
+            return values;
+        }
+
+        /// <summary>A list of die type names. A missing or non-list value gives the fallback; an empty list stays empty; unknown names are skipped.</summary>
+        private static List<DieType> ReadDieTypes(Dictionary<string, object> d, string key, DieType[] fallback)
+        {
+            var list = Get(d, key) as List<object>;
+            if (list == null) return new List<DieType>(fallback);
+            var types = new List<DieType>();
+            foreach (object item in list)
+            {
+                DieType t;
+                if (TryParseEnum(item as string, out t)) types.Add(t);
+            }
+            return types;
         }
     }
 }

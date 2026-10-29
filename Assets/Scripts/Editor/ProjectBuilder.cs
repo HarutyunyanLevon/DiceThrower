@@ -32,10 +32,6 @@ namespace DiceThrower.EditorTools
             var trayConfig = BuilderAssets.GetOrCreate<TrayConfig>(BuilderPaths.TrayConfig);
             var cameraFit = BuilderAssets.GetOrCreate<CameraFitConfig>(BuilderPaths.CameraFit);
             var rules = BuilderAssets.GetOrCreate<RulesConfig>(BuilderPaths.Rules);
-            var attack = BuilderAssets.GetOrCreate<DiceSkin>(BuilderPaths.AttackSkin, s => BuilderAssets.SetSkin(s, BuilderDefaults.AttackBody, BuilderDefaults.AttackInk));
-            var damage = BuilderAssets.GetOrCreate<DiceSkin>(BuilderPaths.DamageSkin, s => BuilderAssets.SetSkin(s, BuilderDefaults.DamageBody, BuilderDefaults.DamageInk));
-            var obsidian = BuilderAssets.GetOrCreate<DiceSkin>(BuilderPaths.ObsidianSkin, s => BuilderAssets.SetSkin(s, BuilderDefaults.ObsidianBody, BuilderDefaults.ObsidianInk));
-            var emerald = BuilderAssets.GetOrCreate<DiceSkin>(BuilderPaths.EmeraldSkin, s => BuilderAssets.SetSkin(s, BuilderDefaults.EmeraldBody, BuilderDefaults.EmeraldInk));
             var uiConfig = BuilderAssets.GetOrCreate<RollUiConfig>(BuilderPaths.UiConfig, c =>
             {
                 c.sets = new[]
@@ -44,14 +40,8 @@ namespace DiceThrower.EditorTools
                     new RollSetSpec { caption = "DAMAGE", rowClass = "dice-row--dmg" },
                 };
             });
-            var dataConfig = BuilderAssets.GetOrCreate<DataUiConfig>(BuilderPaths.DataUiConfig, c =>
-            {
-                c.skinSets = new[]
-                {
-                    new SkinSetSpec { name = BuilderDefaults.IvorySetName, skins = new[] { attack, damage } },
-                    new SkinSetSpec { name = BuilderDefaults.ObsidianSetName, skins = new[] { obsidian, emerald } },
-                };
-            });
+            var dataConfig = BuilderAssets.GetOrCreate<DataUiConfig>(BuilderPaths.DataUiConfig); // its dice sets come from DiceThrower > Build Dice Model Sets
+            var preview = BuilderAssets.GetOrCreate<DicePreviewConfig>(BuilderPaths.PreviewConfig);
 
             FillThemes(dataConfig); // a DataUiConfig made before themes existed gets them here
 
@@ -60,7 +50,7 @@ namespace DiceThrower.EditorTools
             DieBody diePrefab = BuilderAssets.GetOrCreatePrefab<DieBody>(BuilderPaths.DiePrefab, () => PrefabBuilder.BuildDie(dicePhysics));
             BuilderAssets.GetOrCreatePrefab<DiceTray>(BuilderPaths.TrayPrefab, () => PrefabBuilder.BuildTray(trayConfig, diePrefab, diceMat, floorMat, railMat));
             BuilderAssets.GetOrCreatePrefab<RollScreenView>(BuilderPaths.ScreenPrefab, PrefabBuilder.BuildScreen);
-            PrefabBuilder.WireScreenPrefab(uiConfig, rules, cameraFit, dataConfig, feedback); // also fills references and components added after the prefab was first built
+            PrefabBuilder.WireScreenPrefab(uiConfig, rules, cameraFit, dataConfig, preview, feedback); // also fills references and components added after the prefab was first built
 
             if (!File.Exists(BuilderPaths.Scene)) SceneBuilder.BuildScene(cameraFit.pitchDegrees);
 

@@ -7,6 +7,7 @@ namespace DiceThrower.UI
     /// <summary>
     /// Tap, or press-and-slide vertically. A tap fires OnTap on release. Moving more than the
     /// threshold turns it into a slide: sliding up raises the value (OnSlide), release commits it.
+    /// Holding still for LongPressMillis fires OnLongPress instead (when it is set); the release that follows does nothing.
     /// </summary>
     public sealed class PressGesture
     {
@@ -21,6 +22,9 @@ namespace DiceThrower.UI
         public Action<int> OnSlide;
         public Action<int> OnCommit;
         public Action OnEnd;
+        public Action OnLongPress;
+        /// <summary>How long a press has to be held still before OnLongPress fires.</summary>
+        public long LongPressMillis;
 
         private readonly VisualElement _el;
         private bool _down;
@@ -29,6 +33,7 @@ namespace DiceThrower.UI
         private float _startY;
         private int _startValue;
         private int _value;
+        private IVisualElementScheduledItem _longPress;
 
         public PressGesture(VisualElement el)
         {
@@ -57,6 +62,7 @@ namespace DiceThrower.UI
             _value = _startValue;
             _el.CapturePointer(e.pointerId);
             _el.AddToClassList("pressed");
+            if (OnLongPress != null) _longPress = _el.schedule.Execute(FireLongPress).StartingIn(LongPressMillis);
             e.StopPropagation();
         }
 
@@ -68,6 +74,7 @@ namespace DiceThrower.UI
             {
                 if (Mathf.Abs(dy) < SlideThreshold) return;
                 _sliding = true;
+                CancelLongPress();
                 if (OnSlideBegin != null) OnSlideBegin();
             }
             int v = Mathf.Clamp(_startValue + Mathf.RoundToInt(dy / PxPerStep), Min, Max);
@@ -106,10 +113,28 @@ namespace DiceThrower.UI
             if (wasSliding && OnEnd != null) OnEnd();
         }
 
+        /// <summary>The press was held still long enough: the gesture ends here, so neither a tap nor a slide follows.</summary>
+        private void FireLongPress()
+        {
+            if (!_down || _sliding) return;
+            int pointer = _pointer;
+            Reset();
+            _el.ReleasePointer(pointer);
+            if (OnLongPress != null) OnLongPress();
+        }
+
+        private void CancelLongPress()
+        {
+            if (_longPress == null) return;
+            _longPress.Pause();
+            _longPress = null;
+        }
+
         private void Reset()
         {
             _down = false;
             _sliding = false;
+            CancelLongPress();
             _el.RemoveFromClassList("pressed");
         }
     }

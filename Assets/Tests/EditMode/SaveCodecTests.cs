@@ -37,14 +37,15 @@ namespace DiceThrower.Tests
             var data = new SaveData();
             data.Settings.Sound = false;
             data.Settings.Haptics = true;
-            data.Settings.SkinSet = 1;
+            data.Settings.DiceSets.Assign(RollSession.AttackSet, 5);
             data.Presets.Add(MakePreset());
 
             SaveData back = SaveCodec.Deserialize(SaveCodec.Serialize(data));
 
             Assert.IsFalse(back.Settings.Sound);
             Assert.IsTrue(back.Settings.Haptics);
-            Assert.AreEqual(1, back.Settings.SkinSet);
+            Assert.AreEqual(5, back.Settings.DiceSets.Get(RollSession.AttackSet));
+            Assert.AreEqual(1, back.Settings.DiceSets.Get(RollSession.DamageSet));
             Assert.AreEqual(1, back.Presets.Count);
             Preset p = back.Presets[0];
             Assert.AreEqual("p1", p.Id);
@@ -108,14 +109,15 @@ namespace DiceThrower.Tests
         [Test]
         public void MissingAndUnknownPartsFallBackToDefaults()
         {
-            const string json = "{\"settings\":{\"skinSet\":-3},"
+            const string json = "{\"settings\":{\"attackSet\":-3,\"damageSet\":-3},"
                 + "\"presets\":[{\"name\":\"x\",\"sets\":[{\"dice\":{\"D6\":2,\"D99\":4,\"D8\":-5},\"advantage\":\"Sideways\"}]}, 7, null],"
                 + "\"history\":[{\"time\":1,\"sets\":[null,null]}, {\"time\":2,\"sets\":[{\"config\":{},\"passes\":[]}]}, \"junk\"]}";
 
             SaveData data = SaveCodec.Deserialize(json);
 
             Assert.IsTrue(data.Settings.Sound);       // default
-            Assert.AreEqual(0, data.Settings.SkinSet); // negative becomes 0
+            Assert.AreEqual(0, data.Settings.DiceSets.Get(RollSession.AttackSet));  // negative becomes 0
+            Assert.AreEqual(1, data.Settings.DiceSets.Get(RollSession.DamageSet));  // ... and a repeat moves to the lowest unused set
             Assert.AreEqual(1, data.Presets.Count);    // 7 and null are skipped
             Preset p = data.Presets[0];
             Assert.IsNotNull(p.Id);                    // a missing id is made up

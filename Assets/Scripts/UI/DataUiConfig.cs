@@ -6,20 +6,25 @@ using DiceThrower.Game;
 
 namespace DiceThrower.UI
 {
-    /// <summary>A named look for the dice: one skin per roll set, in set order (Attack, Damage).</summary>
+    /// <summary>A dice set the Dice tab offers: a name and the model skin (colour variant) the dice look like.</summary>
     [Serializable]
-    public sealed class SkinSetSpec
+    public sealed class DiceSetSpec
     {
-        public string name = "Skins";
-        public DiceSkin[] skins = new DiceSkin[RollSession.SetCount];
+        public string name = "Dice";
+        public DiceSkin skin;
     }
 
-    /// <summary>A named colour theme: a style sheet that redefines the colour variables of Tavern.uss.</summary>
+    /// <summary>
+    /// A named theme: a style sheet that redefines the colour variables of Tavern.uss (and may restyle frames and fonts),
+    /// and optionally a 3D scene (play surface, backdrop, lights). Without a scene the tray's own surface is shown.
+    /// </summary>
     [Serializable]
     public sealed class ThemeSpec
     {
         public string name = "Theme";
         public StyleSheet sheet;
+        [Tooltip("Optional. The theme's 3D scene prefab (a ThemeScene on its root).")]
+        public ThemeScene scene;
     }
 
     /// <summary>Numbers and texts of the Presets, History and Settings tabs. Limits (history length, name length) are in RulesConfig.</summary>
@@ -35,9 +40,11 @@ namespace DiceThrower.UI
         public float historyCommitDelaySeconds = 2f;
         [Tooltip(".NET date format of an entry's time (local time).")]
         public string historyTimeFormat = "dd MMM  HH:mm";
+        [Tooltip("Longest breakdown line (characters) in an entry that still lists every die; a longer one shows one sum per die type.")]
+        public int historyBreakdownMaxChars = 36;
 
-        [Header("Dice skins (the Settings tab cycles through these)")]
-        public SkinSetSpec[] skinSets = new SkinSetSpec[0];
+        [Header("Dice sets (the Dice tab lists these, in this order; the saved choice is an index, so new ones go at the end)")]
+        public DiceSetSpec[] diceSets = new DiceSetSpec[0];
 
         [Header("Themes (the Settings tab cycles through these)")]
         public ThemeSpec[] themes = new ThemeSpec[0];
@@ -67,7 +74,13 @@ namespace DiceThrower.UI
         [Tooltip("{0} = preset name")]
         public string presetSavedFormat = "Saved \"{0}\"";
         public string historyClearedToast = "History cleared";
-        public string skinChangedToast = "The new skin applies from the next throw";
+        public string diceSetChangedToast = "The new dice apply from the next throw";
+
+        [Header("Dice tab")]
+        [Tooltip("{0} = roll set caption, e.g. ATTACK")]
+        public string diceSlotFormat = "{0} DICE SET";
+        [Tooltip("{0} = roll set name, e.g. Attack")]
+        public string useDiceSetFormat = "Use for {0}";
 
         [Header("Lists")]
         [Tooltip("{0} = number of the new preset")]
@@ -80,20 +93,21 @@ namespace DiceThrower.UI
         [TextArea] public string presetsEmptyText = "No presets yet. Set up your dice on the Roll tab and press Save.";
         [TextArea] public string historyEmptyText = "No throws yet.";
 
-        /// <summary>At least one theme with a style sheet, and every skin set needs one skin per roll set.</summary>
+        /// <summary>The skin of a dice set, with the index kept inside the list.</summary>
+        public DiceSkin SkinOf(int diceSetIndex)
+        {
+            return diceSets[Mathf.Clamp(diceSetIndex, 0, diceSets.Length - 1)].skin;
+        }
+
+        /// <summary>At least one theme with a style sheet, and at least one dice set per roll set, each with a skin.</summary>
         public bool IsValid()
         {
             if (themes == null || themes.Length == 0) return false;
             for (int i = 0; i < themes.Length; i++)
                 if (themes[i].sheet == null) return false;
-            if (skinSets == null || skinSets.Length == 0) return false;
-            for (int i = 0; i < skinSets.Length; i++)
-            {
-                DiceSkin[] skins = skinSets[i].skins;
-                if (skins == null || skins.Length != RollSession.SetCount) return false;
-                for (int s = 0; s < skins.Length; s++)
-                    if (skins[s] == null) return false;
-            }
+            if (diceSets == null || diceSets.Length < RollSession.SetCount) return false;
+            for (int i = 0; i < diceSets.Length; i++)
+                if (diceSets[i] == null || diceSets[i].skin == null) return false;
             return true;
         }
     }

@@ -55,7 +55,10 @@ namespace DiceThrower.UI
                 total.EnableInClassList("hist-set__total--nat20", result.HasNat20);
                 total.EnableInClassList("hist-set__total--nat1", result.HasNat1);
                 line.Add(total);
-                line.Add(UiFactory.Label(RollFormat.Breakdown(result), "hist-set__detail"));
+                VisualElement detail = UiFactory.Column("hist-set__detail");
+                detail.Add(UiFactory.Label(RollFormat.FormulaTagged(result.Config), "hist-set__formula"));
+                detail.Add(UiFactory.Label(RollFormat.Breakdown(result, _cfg.historyBreakdownMaxChars), "hist-set__breakdown"));
+                line.Add(detail);
                 text.Add(line);
             }
             row.Add(text);

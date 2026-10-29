@@ -6,7 +6,7 @@ using DiceThrower.Game;
 
 namespace DiceThrower.UI
 {
-    /// <summary>The Settings tab: sound and haptics switches, physics dice and settle time, dice skin, colour theme, the chip usage window and a clear-history button. Every change is saved at once.</summary>
+    /// <summary>The Settings tab: sound and haptics switches, physics dice and settle time, colour theme, the chip usage window and a clear-history button. Every change is saved at once.</summary>
     public sealed class SettingsView
     {
         private const string SwitchOnClass = "switch--on";
@@ -18,21 +18,19 @@ namespace DiceThrower.UI
         private readonly AppData _data;
         private readonly ThemeApplier _theme;
         private readonly DialogView _dialog;
-        private readonly Action _onSkinChanged;
         private readonly Action _onThrowChanged;
         private readonly Action<string> _toast;
         private readonly VisualElement _soundSwitch, _hapticsSwitch, _clearButton, _windowMinus, _windowPlus, _physicsSwitch, _settleMinus, _settlePlus;
-        private readonly Label _skinValue, _themeValue, _windowValue, _settleValue;
+        private readonly Label _themeValue, _windowValue, _settleValue;
 
         public SettingsView(VisualElement root, DataUiConfig cfg, RulesConfig rules, AppData data, ThemeApplier theme,
-                            DialogView dialog, Action onSkinChanged, Action onThrowChanged, Action<string> toast)
+                            DialogView dialog, Action onThrowChanged, Action<string> toast)
         {
             _cfg = cfg;
             _rules = rules;
             _data = data;
             _theme = theme;
             _dialog = dialog;
-            _onSkinChanged = onSkinChanged;
             _onThrowChanged = onThrowChanged;
             _toast = toast;
 
@@ -45,7 +43,6 @@ namespace DiceThrower.UI
             _clearButton = root.Q<VisualElement>("btn-clear-history");
             _windowMinus = root.Q<VisualElement>("window-minus");
             _windowPlus = root.Q<VisualElement>("window-plus");
-            _skinValue = root.Q<Label>("skin-value");
             _themeValue = root.Q<Label>("theme-value");
             _windowValue = root.Q<Label>("window-value");
 
@@ -54,7 +51,6 @@ namespace DiceThrower.UI
             PressGesture.Tappable(root.Q<VisualElement>("row-physics"), () => { _data.Settings.PhysicsDice = !_data.Settings.PhysicsDice; Changed(); _onThrowChanged(); });
             PressGesture.Tappable(_settleMinus, () => StepSettle(-_rules.settleSecondsStep));
             PressGesture.Tappable(_settlePlus, () => StepSettle(_rules.settleSecondsStep));
-            PressGesture.Tappable(root.Q<VisualElement>("row-skin"), NextSkin);
             PressGesture.Tappable(root.Q<VisualElement>("row-theme"), NextTheme);
             PressGesture.Tappable(_windowMinus, () => StepWindow(-_rules.usageWindowStep));
             PressGesture.Tappable(_windowPlus, () => StepWindow(_rules.usageWindowStep));
@@ -71,17 +67,11 @@ namespace DiceThrower.UI
             _settleValue.text = string.Format(_cfg.settleSecondsFormat, settle);
             _settleMinus.EnableInClassList(StepperDisabledClass, !_data.Settings.PhysicsDice || settle <= _rules.settleSecondsMin);
             _settlePlus.EnableInClassList(StepperDisabledClass, !_data.Settings.PhysicsDice || settle >= _rules.settleSecondsMax);
-            _skinValue.text = _cfg.skinSets[SkinIndex()].name;
             _themeValue.text = _theme.NameOf(_data.Settings.Theme);
             _windowValue.text = string.Format(_cfg.usageWindowFormat, window);
             _windowMinus.EnableInClassList(StepperDisabledClass, window <= _rules.usageWindowMin);
             _windowPlus.EnableInClassList(StepperDisabledClass, window >= _rules.usageWindowMax);
             _clearButton.EnableInClassList(DisabledClass, _data.History.Count == 0);
-        }
-
-        private int SkinIndex()
-        {
-            return Mathf.Clamp(_data.Settings.SkinSet, 0, _cfg.skinSets.Length - 1);
         }
 
         /// <summary>The saved window, or the config default, kept inside the allowed range.</summary>
@@ -108,13 +98,6 @@ namespace DiceThrower.UI
         {
             _data.Save();
             Refresh();
-        }
-
-        private void NextSkin()
-        {
-            _data.Settings.SkinSet = (SkinIndex() + 1) % _cfg.skinSets.Length;
-            Changed();
-            _onSkinChanged();
         }
 
         private void NextTheme()

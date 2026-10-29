@@ -18,3 +18,4 @@ MonoBehaviour:
   metallic: 0
   model: {fileID: 11400000, guid: fc64baf38d9098942aa69de185ff40d4, type: 2}
   variant: 6
+  spriteAtlas: {fileID: 2800000, guid: e7a6b261af518a949808e08044954a83, type: 3}

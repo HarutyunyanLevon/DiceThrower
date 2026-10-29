@@ -1,22 +1,27 @@
 using UnityEngine;
 using UnityEngine.UIElements;
+using DiceThrower.Game;
 
 namespace DiceThrower.UI
 {
     /// <summary>
-    /// Switches the colour theme. A theme is a style sheet that redefines the colour variables of Tavern.uss;
-    /// it is added last to the root, so its variables win. Only one theme sheet is on the root at a time.
+    /// Switches the theme. A theme is a style sheet that redefines the colour variables of Tavern.uss and may restyle frames and fonts;
+    /// it is added last to the root, so its rules win. Only one theme sheet is on the root at a time.
+    /// A theme can also carry a 3D scene (play surface, backdrop, lights), which the <see cref="ThemeSceneHost"/> swaps in.
     /// </summary>
     public sealed class ThemeApplier
     {
         private readonly VisualElement _root;
         private readonly ThemeSpec[] _themes;
+        private readonly ThemeSceneHost _host;
         private StyleSheet _current;
 
-        public ThemeApplier(VisualElement root, ThemeSpec[] themes)
+        /// <param name="host">Swaps the 3D scene. Null: themes only change the style sheet.</param>
+        public ThemeApplier(VisualElement root, ThemeSpec[] themes, ThemeSceneHost host = null)
         {
             _root = root;
             _themes = themes;
+            _host = host;
         }
 
         public int Count { get { return _themes.Length; } }
@@ -34,11 +39,12 @@ namespace DiceThrower.UI
 
         public void Apply(int index)
         {
-            StyleSheet sheet = _themes[Clamp(index)].sheet;
-            if (sheet == _current) return;
+            ThemeSpec theme = _themes[Clamp(index)];
+            if (_host != null) _host.Show(theme.scene);
+            if (theme.sheet == _current) return;
             if (_current != null) _root.styleSheets.Remove(_current);
-            _root.styleSheets.Add(sheet);
-            _current = sheet;
+            _root.styleSheets.Add(theme.sheet);
+            _current = theme.sheet;
         }
     }
 }

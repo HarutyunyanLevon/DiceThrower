@@ -74,6 +74,7 @@ MonoBehaviour:
   rules: {fileID: 11400000, guid: 83640048e27589840b42f29adb213b76, type: 2}
   cameraFit: {fileID: 11400000, guid: 08075b26a630aa049a4352599012847d, type: 2}
   dataConfig: {fileID: 11400000, guid: 320ba81f1e78f814a913133cb19b112b, type: 2}
+  previewConfig: {fileID: 11400000, guid: 6261d8eba3d0c604bb8d026dcf50adcf, type: 2}
   sceneCamera: {fileID: 0}
   tray: {fileID: 0}
 --- !u!82 &9197958684436228846

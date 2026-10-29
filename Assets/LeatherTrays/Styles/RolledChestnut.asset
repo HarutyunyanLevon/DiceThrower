@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 391bff5c7332fa94bae3c096940aa660, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DiceThrower.Game::DiceThrower.Game.LeatherTrayStyle
+  outerSize: {x: 8.2, y: 11.7}
+  cornerRadius: 1.9
+  wallLength: 1.7
+  flareDegrees: 9
+  floorFillet: 0.7
+  thickness: 0.2
+  rimBead: 0.12
+  beadStart: 0.55
+  grooveFromRim: []
+  grooveWidth: 0.12
+  grooveDepth: 0.04
+  droop: 0
+  cornerRise: 0
+  cornerFlareDegrees: 0
+  cornerSharpness: 2
+  irregularity: 0.02
+  seed: 23
+  stitchRowsFromRim:
+  - 0.2
+  stitchLength: 0.3
+  stitchWidth: 0.07
+  stitchHeight: 0.035
+  stitchPitch: 0.46
+  rivets: 0
+  rivetFromRim: 0.4
+  rivetRadius: 0.17
+  topColor: {r: 0.42, g: 0.22, b: 0.1, a: 1}
+  liningColor: {r: 0.5, g: 0.3, b: 0.15, a: 1}
+  threadColor: {r: 0.8, g: 0.62, b: 0.38, a: 1}
+  hardwareColor: {r: 0.85, g: 0.62, b: 0.24, a: 1}
+  grainCells: 16
+  pebbleSize: 0.14
+  grainBump: 0.65
+  topSmoothness: 0.62
+  liningSmoothness: 0.15
+  liningTileSize: 2
+  liningBump: 0.6
+  bounciness: 0.12
+  dynamicFriction: 0.65
+  staticFriction: 0.75
+  collisionThickness: 0.4
+  flexRadius: 1.6
+  flexMaxAmplitude: 0.12
+  flexAmplitudePerSpeed: 0.011
+  flexMinSpeed: 1.5
+  flexFrequency: 12
+  flexDecaySeconds: 0.2
+  flexMaxHits: 6
+  flexMinHitHeight: 0.2
+  sideSegments: 8
+  cornerSegments: 8
+  filletSegments: 4
+  wallSegments: 4
+  rimSegments: 6

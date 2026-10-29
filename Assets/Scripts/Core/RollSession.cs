@@ -22,7 +22,8 @@ namespace DiceThrower.Core
     /// </summary>
     public sealed class RollSession
     {
-        public const int SetCount = 2; // 0 = Attack, 1 = Damage
+        public const int SetCount = 2;
+        public const int AttackSet = 0, DamageSet = 1;
 
         public readonly RollSetConfig[] Sets = { new RollSetConfig(), new RollSetConfig() };
         public readonly DiceLimits Limits;

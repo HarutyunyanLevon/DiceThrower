@@ -31,6 +31,8 @@ namespace DiceThrower.UI
         public float modifierPxPerStep = 14f;
         [Tooltip("Extra track length above and below the slide range (UI px).")]
         public float sliderTrackPad = 22f;
+        [Tooltip("Seconds a die button is held still before its type is removed from the Attack row.")]
+        public float longPressSeconds = 0.5f;
 
         [Header("Feedback")]
         public float toastSeconds = 1.6f;
@@ -44,6 +46,8 @@ namespace DiceThrower.UI
         [Tooltip("{0} = max per type, {1} = die label")]
         public string limitTypeFormat = "Limit reached: {0} x {1}";
         [Tooltip("{0} = caption, {1} = lowest, {2} = highest possible total")]
-        public string rangeCaptionFormat = "{0}  -  {1} to {2}";
+        public string captionRangeFormat = "{0}: {1} - {2}";
+        [Tooltip("Longest breakdown line (characters) that still lists every die; a longer one shows one sum per die type.")]
+        public int breakdownMaxChars = 44;
     }
 }

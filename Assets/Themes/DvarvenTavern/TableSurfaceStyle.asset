@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b01270020ccc9a438958d76e322c591, type: 3}
+  m_Name: TableSurfaceStyle
+  m_EditorClassIdentifier: DiceThrower.Game::DiceThrower.Game.TableSurfaceStyle
+  outerSize: {x: 8.2, y: 11.7}
+  rimWidth: 0.7
+  rimHeight: 0.55
+  topThickness: 0.5
+  wallHeight: 14
+  bounciness: 0.3
+  dynamicFriction: 0.5
+  staticFriction: 0.6
+  mugRadius: 0.6
+  mugHeight: 1
+  mugInset: 0.1
+  coinCount: 7
+  coinRadius: 0.26
+  coinThickness: 0.06
+  coinSeed: 5
+  floorDepth: 3
+  floorSize: 80
+  floorTiling: 18
+  lanternColor: {r: 1, g: 0.7, b: 0.32, a: 1}
+  lanternIntensity: 14
+  lanternRange: 16
+  lanternHeight: 3.2
+  lanternOffset: {x: 5.4, y: 7.2}
+  lightColor: {r: 1, g: 0.82, b: 0.56, a: 1}
+  lightIntensity: 0.8
+  lightEuler: {x: 60, y: -30, z: 0}
+  cameraBackground: {r: 0.07, g: 0.05, b: 0.04, a: 1}
+  ambientColor: {r: 0.2, g: 0.14, b: 0.1, a: 1}
+  oakTint: {r: 1, g: 0.92, b: 0.85, a: 1}
+  goldColor: {r: 0.85, g: 0.62, b: 0.2, a: 1}
+  mugColor: {r: 0.48, g: 0.29, b: 0.12, a: 1}
+  foamColor: {r: 0.95, g: 0.85, b: 0.55, a: 1}

@@ -1,0 +1,118 @@
+/* Dvarven Tavern theme: the colour variables of Tavern.uss in oak, iron and ember gold, plus art deco frames and fonts.
+   ThemeApplier adds this sheet last, so where a rule has the same specificity as one in Roll.uss / Pages.uss, this one wins. */
+:root {
+    --text: #f4e3bd;
+    --muted: #c2a574;
+    --accent: #d9a441;
+    --accent-ink: #241405;
+    --off: #7d6a4c;
+    --panel: #3b2514;
+    --panel-edge: #d9a441;
+    --bg: #1c130c;
+    --btn: #2c1c0e;
+    --btn-edge: #8a6420;
+    --scrim: rgba(20, 12, 6, 0.86);
+
+    --atk: #f2e9d0;
+    --atk-ink: #2a1a0a;
+    --atk-edge: #7a5a28;
+    --dmg: #a8321f;
+    --dmg-ink: #ffffff;
+    --dmg-edge: #f0c07a;
+
+    --adv-n: #6b4a1c;
+    --adv-n-edge: #d9a441;
+    --adv-n-ink: #fff3d6;
+    --adv-a: #3fb36b;
+    --adv-a-edge: #a6f0c2;
+    --adv-a-ink: #04210f;
+    --adv-d: #e8574c;
+    --adv-d-edge: #ffb4ad;
+    --adv-d-ink: #14090a;
+}
+
+/* ---------- fonts: Limelight for headings and numbers that matter, Josefin Sans for the rest ---------- */
+.screen {
+    -unity-font-definition: url("/Assets/Fonts/JosefinSans-Variable.ttf");
+}
+.caption,
+.total,
+.tab__text,
+.action__text--primary,
+.dialog__title,
+.mod__text {
+    -unity-font-definition: url("/Assets/Fonts/Limelight-Regular.ttf");
+    -unity-font-style: normal;
+    letter-spacing: 1px;
+}
+
+/* ---------- art deco panel frame (9-slice, chamfered corners with a double gold line) ---------- */
+.set-header,
+.chip,
+.tabbar,
+.dialog__card,
+.picker,
+.toast {
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url("/Assets/UI/Dvarven/Ui_DvarvenPanel.png");
+    -unity-slice-left: 32;
+    -unity-slice-right: 32;
+    -unity-slice-top: 32;
+    -unity-slice-bottom: 32;
+    -unity-slice-scale: 0.5px;
+    border-width: 0;
+    border-radius: 0;
+}
+.chip.pressed {
+    background-color: rgba(0, 0, 0, 0);
+    -unity-background-image-tint-color: rgb(190, 160, 110);
+}
+
+/* ---------- buttons: dark frame for the quiet ones, gold for the main one ---------- */
+.action--ghost,
+.action--danger {
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url("/Assets/UI/Dvarven/Ui_DvarvenButton.png");
+    -unity-slice-left: 32;
+    -unity-slice-right: 32;
+    -unity-slice-top: 32;
+    -unity-slice-bottom: 32;
+    -unity-slice-scale: 0.5px;
+    border-width: 0;
+    border-radius: 0;
+}
+.action--primary {
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url("/Assets/UI/Dvarven/Ui_DvarvenButtonGold.png");
+    -unity-slice-left: 32;
+    -unity-slice-right: 32;
+    -unity-slice-top: 32;
+    -unity-slice-bottom: 32;
+    -unity-slice-scale: 0.5px;
+    border-width: 0;
+    border-radius: 0;
+}
+
+/* ---------- tabs: square-cut pills, and the Roll tab as a gold coin ---------- */
+.tab { border-radius: 4px; }
+.tab--roll,
+.tab--roll.tab--active {
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url("/Assets/UI/Dvarven/Ui_DvarvenRollCoin.png");
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: rgb(170, 150, 120);
+    border-width: 0;
+    border-radius: 0;
+}
+.tab--roll.tab--active { -unity-background-image-tint-color: rgb(255, 255, 255); }
+.tab--roll .tab__text { color: var(--accent-ink); }
+
+/* ---------- dice buttons: dark inset with a bronze edge ---------- */
+.die-btn {
+    background-color: rgba(0, 0, 0, 0.28);
+    border-color: var(--btn-edge);
+    border-radius: 3px;
+}
+.die-btn.pressed { background-color: rgba(217, 164, 65, 0.25); }
+.switch,
+.switch__knob { border-radius: 4px; }

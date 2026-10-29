@@ -7,8 +7,8 @@ namespace DiceThrower.Core
     {
         public bool Sound = true;
         public bool Haptics = true;
-        /// <summary>Index into the dice skin sets of the UI config.</summary>
-        public int SkinSet;
+        /// <summary>The model dice set (index into the UI config's list) each roll set rolls with. A global setting, never stored in presets.</summary>
+        public readonly DiceSetChoice DiceSets = new DiceSetChoice();
         /// <summary>Index into the themes of the UI config.</summary>
         public int Theme;
         /// <summary>How many of the latest throws rank the pinned chips. 0 = not chosen yet, the RulesConfig value applies.</summary>
@@ -17,6 +17,8 @@ namespace DiceThrower.Core
         public bool PhysicsDice = true;
         /// <summary>Seconds after a throw before dice that still move are set where they are. 0 = not chosen yet, the RulesConfig value applies.</summary>
         public int SettleSeconds;
+        /// <summary>The die types on the Attack row (d20, d4, d6, d% until changed). A global setting, never stored in presets.</summary>
+        public readonly DiceRowTypes AttackDice = new DiceRowTypes();
 
         public int SettleSecondsOr(int configDefault)
         {

@@ -2,6 +2,7 @@
     "name": "DiceThrower.Editor",
     "rootNamespace": "DiceThrower.EditorTools",
     "references": [
+        "DiceThrower.Core",
         "DiceThrower.Game",
         "DiceThrower.UI",
         "Unity.InputSystem",

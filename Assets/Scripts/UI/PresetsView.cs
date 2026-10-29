@@ -61,7 +61,7 @@ namespace DiceThrower.UI
 
         private string Describe(RollSetConfig set)
         {
-            string dice = RollFormat.Notation(set);
+            string dice = RollFormat.FormulaTagged(set);
             if (dice.Length == 0) return _cfg.noDiceText;
             return set.Enabled ? dice : string.Format(_cfg.setOffFormat, dice);
         }

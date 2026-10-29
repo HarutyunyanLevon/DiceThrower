@@ -7,7 +7,8 @@ namespace DiceThrower.UI
     /// <summary>
     /// A filled polygon (die silhouette, 48x48 design units) with a centred text label.
     /// Colours come from USS custom properties --die-fill, --die-edge, --die-ink, so themes
-    /// can restyle every die from the stylesheet.
+    /// can restyle every die from the stylesheet. With a sprite (the picture of a die from a dice set's atlas)
+    /// the sprite is the background instead of the polygon and the label stays on top (class die-icon--sprite).
     /// </summary>
     public sealed class DieIcon : VisualElement
     {
@@ -21,6 +22,7 @@ namespace DiceThrower.UI
         private readonly float _textY;
         private Color _fill = new Color(0.5f, 0.5f, 0.5f);
         private Color _edge = Color.white;
+        private Sprite _sprite;
 
         public DieIcon(Vector2[] pts, string text, float textY)
         {
@@ -40,9 +42,22 @@ namespace DiceThrower.UI
             RegisterCallback<GeometryChangedEvent>(OnGeometry);
         }
 
-        public static DieIcon ForType(DieType t)
+        /// <param name="sprite">The die's picture, or null for the plain polygon.</param>
+        public static DieIcon ForType(DieType t, Sprite sprite = null)
         {
-            return new DieIcon(ShapeFor(t), DieInfo.Label(t), TextYFor(t));
+            var icon = new DieIcon(ShapeFor(t), DieInfo.Label(t), TextYFor(t));
+            icon.SetSprite(sprite);
+            return icon;
+        }
+
+        /// <summary>Shows the sprite instead of the polygon; null goes back to the polygon.</summary>
+        public void SetSprite(Sprite sprite)
+        {
+            _sprite = sprite;
+            EnableInClassList("die-icon--sprite", sprite != null);
+            if (sprite != null) style.backgroundImage = new StyleBackground(sprite);
+            else style.backgroundImage = StyleKeyword.Null;
+            MarkDirtyRepaint();
         }
 
         public void SetText(string text) { _label.text = text; }
@@ -101,6 +116,7 @@ namespace DiceThrower.UI
 
         private void Draw(MeshGenerationContext mgc)
         {
+            if (_sprite != null) return; // the sprite is the picture
             Rect r = contentRect;
             float s = Mathf.Min(r.width, r.height);
             if (s <= 0f) return;
@@ -149,6 +165,8 @@ namespace DiceThrower.UI
 
         public static Vector2[][] ChevronDown { get { return new[] { P(6, 9, 12, 15, 18, 9) }; } }
         public static Vector2[][] ChevronUp { get { return new[] { P(6, 15, 12, 9, 18, 15) }; } }
+
+        public static Vector2[][] Plus { get { return new[] { P(12, 5, 12, 19), P(5, 12, 19, 12) }; } }
 
         public static Vector2[][] Trash
         {

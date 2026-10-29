@@ -15,45 +15,62 @@ MonoBehaviour:
   saveFileName: dicethrower_save.json
   historyCommitDelaySeconds: 2
   historyTimeFormat: dd MMM  HH:mm
-  skinSets:
-  - name: Ivory & Crimson
-    skins:
-    - {fileID: 11400000, guid: 5b3e78690fa7c8846b2a3db8d670f447, type: 2}
-    - {fileID: 11400000, guid: 56a0e57c335d96b449f04b71936df3b9, type: 2}
-  - name: Obsidian & Emerald
-    skins:
-    - {fileID: 11400000, guid: 8db3c5e4f0e874d4c802528eb0010e11, type: 2}
-    - {fileID: 11400000, guid: 8aef831c3f4db1f4cad4193411df1a72, type: 2}
-  - name: Cosmic Teal & Crimson
-    skins:
-    - {fileID: 11400000, guid: 97ec9af78955eb549a8f14e5c3d794c4, type: 2}
-    - {fileID: 11400000, guid: aab37223f577ea34399ed2a0ec3f980c, type: 2}
-  - name: Cosmic Green & Orange
-    skins:
-    - {fileID: 11400000, guid: 31f8ea6e2cae6d64bbf9a9e060010126, type: 2}
-    - {fileID: 11400000, guid: c694e072c1d54cc44a3e0ceeb95e65c6, type: 2}
-  - name: Cosmic Purple & Navy
-    skins:
-    - {fileID: 11400000, guid: d809c87cec2f59c439208df890bca9ca, type: 2}
-    - {fileID: 11400000, guid: 9d7af91d9bad3b34fa12e82ecace5409, type: 2}
-  - name: Glow Sky & Red
-    skins:
-    - {fileID: 11400000, guid: 11a0904da629a884986591f34c0fcf30, type: 2}
-    - {fileID: 11400000, guid: ff871f64870aa9741b4fd75d54b7225f, type: 2}
-  - name: Glow Black & White
-    skins:
-    - {fileID: 11400000, guid: c4015c132ee32794eb8554c9e1570401, type: 2}
-    - {fileID: 11400000, guid: 811e2c0f8365bd44d920a89c1102a317, type: 2}
-  - name: Glow Green & Lavender
-    skins:
-    - {fileID: 11400000, guid: 435b20301033c284c8af9419cde07e07, type: 2}
-    - {fileID: 11400000, guid: e361756732bea7b4399bc6214580dde1, type: 2}
+  historyBreakdownMaxChars: 36
+  diceSets:
+  - name: Cosmic Teal
+    skin: {fileID: 11400000, guid: 97ec9af78955eb549a8f14e5c3d794c4, type: 2}
+  - name: Cosmic Green
+    skin: {fileID: 11400000, guid: 31f8ea6e2cae6d64bbf9a9e060010126, type: 2}
+  - name: Cosmic Purple
+    skin: {fileID: 11400000, guid: d809c87cec2f59c439208df890bca9ca, type: 2}
+  - name: Cosmic Crimson
+    skin: {fileID: 11400000, guid: aab37223f577ea34399ed2a0ec3f980c, type: 2}
+  - name: Cosmic Grey
+    skin: {fileID: 11400000, guid: ba8231070ee83424f963ed0fc9d170e3, type: 2}
+  - name: Cosmic Navy
+    skin: {fileID: 11400000, guid: 9d7af91d9bad3b34fa12e82ecace5409, type: 2}
+  - name: Cosmic Orange
+    skin: {fileID: 11400000, guid: c694e072c1d54cc44a3e0ceeb95e65c6, type: 2}
+  - name: Glow Sky
+    skin: {fileID: 11400000, guid: 11a0904da629a884986591f34c0fcf30, type: 2}
+  - name: Glow Lavender
+    skin: {fileID: 11400000, guid: e361756732bea7b4399bc6214580dde1, type: 2}
+  - name: Glow Red
+    skin: {fileID: 11400000, guid: ff871f64870aa9741b4fd75d54b7225f, type: 2}
+  - name: Glow White
+    skin: {fileID: 11400000, guid: 811e2c0f8365bd44d920a89c1102a317, type: 2}
+  - name: Glow Black
+    skin: {fileID: 11400000, guid: c4015c132ee32794eb8554c9e1570401, type: 2}
+  - name: Glow Steel
+    skin: {fileID: 11400000, guid: e8b813b329417a841922ca3f197b8aa5, type: 2}
+  - name: Glow Indigo
+    skin: {fileID: 11400000, guid: 8d4ba266cfe251f43bc1cf2abc01beb6, type: 2}
+  - name: Glow Green
+    skin: {fileID: 11400000, guid: 435b20301033c284c8af9419cde07e07, type: 2}
+  - name: Pixel Lime
+    skin: {fileID: 11400000, guid: 6e0c6fdf89d91bd4e89dbc9d5be27bf6, type: 2}
+  - name: Pixel Ruby
+    skin: {fileID: 11400000, guid: 1eacb162a6926f444aa566e35dfa3419, type: 2}
+  - name: Pixel Sapphire
+    skin: {fileID: 11400000, guid: e1058bacd4aeb1a4683ee022f0b75b44, type: 2}
+  - name: Pixel Gold
+    skin: {fileID: 11400000, guid: c1a2193c466624d4e8577e008a1e19a7, type: 2}
+  - name: Pixel Steel
+    skin: {fileID: 11400000, guid: 008f11c1bae340c4eb947f990614e7ca, type: 2}
+  - name: Pixel Amethyst
+    skin: {fileID: 11400000, guid: b3d8760408ed50e45886b9c630ea5b67, type: 2}
   themes:
   - name: Tavern & Leather
     sheet: {fileID: 7433441132597879392, guid: d929441bd4cb9bd40a33cbf016e0c030, type: 3}
+    scene: {fileID: 0}
   - name: Moonlight
     sheet: {fileID: 7433441132597879392, guid: 5014da8c46b34f34bb4add719decc588, type: 3}
+    scene: {fileID: 0}
+  - name: Dvarven Tavern
+    sheet: {fileID: 7433441132597879392, guid: 0e7d2a22b0a54e040bf365061ed31ac9, type: 3}
+    scene: {fileID: 3975175543711082056, guid: 650f69589b6d692478ff3441e79de791, type: 3}
   usageWindowFormat: '{0} throws'
+  settleSecondsFormat: '{0} s'
   cancelText: Cancel
   savePresetTitle: Save preset
   savePresetOk: Save
@@ -68,7 +85,9 @@ MonoBehaviour:
   saveEmptyToast: Add some dice first
   presetSavedFormat: Saved "{0}"
   historyClearedToast: History cleared
-  skinChangedToast: The new skin applies from the next throw
+  diceSetChangedToast: The new dice apply from the next throw
+  diceSlotFormat: '{0} DICE SET'
+  useDiceSetFormat: Use for {0}
   defaultPresetNameFormat: Preset {0}
   setLineFormat: '{0}: {1}'
   setOffFormat: '{0} (off)'

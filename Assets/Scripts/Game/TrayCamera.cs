@@ -10,7 +10,8 @@ namespace DiceThrower.Game
         /// </summary>
         /// <param name="trayCenter">World position of the tray floor's centre.</param>
         /// <param name="trayExtent">Outer width and depth of the tray.</param>
-        public static void Fit(Camera cam, Vector3 trayCenter, Vector2 trayExtent, CameraFitConfig cfg, Rect slot)
+        /// <param name="trayHeight">How high the rim stands above the floor; the rim is kept in view too.</param>
+        public static void Fit(Camera cam, Vector3 trayCenter, Vector2 trayExtent, CameraFitConfig cfg, Rect slot, float trayHeight = 0f)
         {
             if (!(slot.width > 0f) || !(slot.height > 0f)) return;
 
@@ -24,6 +25,8 @@ namespace DiceThrower.Game
             {
                 trayCenter + new Vector3(-hw, 0f, -hd), trayCenter + new Vector3(hw, 0f, -hd),
                 trayCenter + new Vector3(-hw, 0f, hd), trayCenter + new Vector3(hw, 0f, hd),
+                trayCenter + new Vector3(-hw, trayHeight, -hd), trayCenter + new Vector3(hw, trayHeight, -hd),
+                trayCenter + new Vector3(-hw, trayHeight, hd), trayCenter + new Vector3(hw, trayHeight, hd),
             };
 
             float best = cfg.maxDistance;
