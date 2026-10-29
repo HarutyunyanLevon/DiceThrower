@@ -84,7 +84,7 @@ namespace DiceThrower.EditorTools
             AddDiceSets(diceSets);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-            Debug.Log("DiceThrower: dice model sets built (" + sets.Count + " models, " + diceSets.Count + " skins). The Dice tab lists " + diceSets.Count + " dice sets. Next: DiceThrower > Render Dice Sprite Atlases.");
+            Debug.Log("DiceThrower: dice model sets built (" + sets.Count + " models, " + diceSets.Count + " skins). The Dice tab lists " + diceSets.Count + " dice sets.");
         }
 
         /// <summary>Appends the dice sets that the Dice tab does not list yet; the saved choice is an index, so the existing order never changes.</summary>

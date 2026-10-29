@@ -72,14 +72,12 @@ namespace DiceThrower.UI
             for (int i = 0; i < _cfg.diceSets.Length; i++)
             {
                 int index = i;
-                DiceSkin skin = _cfg.diceSets[i].skin;
-
                 VisualElement card = new VisualElement();
                 card.AddToClassList("dice-card");
 
                 VisualElement body = UiFactory.Column("dice-card__body");
                 VisualElement picture = UiFactory.Column("dice-card__picture");
-                picture.Add(DieIcon.ForType(DieType.D20, DiceSprites.Get(skin, DieType.D20)));
+                picture.Add(DieIcon.ForType(DieType.D20));
                 body.Add(picture);
                 body.Add(UiFactory.Label(_cfg.diceSets[i].name, "dice-card__name"));
 
@@ -184,7 +182,7 @@ namespace DiceThrower.UI
                 return;
             }
             picture.style.backgroundImage = StyleKeyword.Null;
-            picture.Add(DieIcon.ForType(DieType.D20, DiceSprites.Get(skin, DieType.D20)));
+            picture.Add(DieIcon.ForType(DieType.D20));
         }
 
         private static string Capitalize(string text)

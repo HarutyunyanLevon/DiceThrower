@@ -1,6 +1,6 @@
 # DiceThrower
 
-A D&D dice thrower for mobile (portrait). Unity 6, URP, new Input System, UI Toolkit. Tavern and Leather look.
+A D&D dice thrower for mobile (portrait). Unity 6, URP, new Input System, UI Toolkit. Six switchable themes (see Themes).
 Physics dice, but the result is decided first by the RNG; the dice tumble and then show that number.
 
 ## Run it
@@ -26,7 +26,11 @@ Needs the Android Build Support module (SDK, NDK, OpenJDK) for this Editor versi
 - **Pinned chips**: a row above the Throw button. Presets used in the last `usageWindow` throws come first (most used first), then the unused ones, newest saved first, at most `pinnedChipsMax`. Tap a chip to load and throw it.
 - **History tab**: the last throws, newest first, with time, each set's total and its breakdown. Tap one to throw that setup again.
 - **Settings tab**: sound and haptics switches, dice skin, colour theme, chip history (usage window, - and + buttons), clear history.
-- **Themes**: a theme is a USS file that redefines the colour variables of `Tavern.uss` (`Moonlight.uss` is the second one). `ThemeApplier` swaps the style sheet at runtime; add a theme by adding a USS file and an entry to `DataUiConfig > Themes`.
+- **Themes**: a theme = a USS sheet (colours, fonts, 9-slice frames; `Tavern.uss` is the base variable sheet, `Dvarven.uss` etc. override it) + an optional `ThemeScene` prefab (3D table/tray, backdrop, lights). `ThemeApplier` adds the sheet last on the root and asks `ThemeSceneHost` to swap the scene; only the active theme's scene exists. Add one with a builder in `Scripts/Editor` (see `DvarvenTavernBuilder`) that ends in `RegisterTheme`, which appends a `ThemeSpec` to `DataUiConfig > Themes`.
+  - `ThemeScene` (on the prefab root): `Surface` marker (x/z scale = outer play size, y = the collider plane where dice land), `rimHeight`, sun/camera/ambient settings.
+  - Dice need a bounded collider: visual rims plus invisible tall walls. Mugs and props are visual only.
+  - Status: Dvarven Tavern built (T1, written without a compile, verify in Editor). Planned: Cultist, Cathedral (T2); Sky Elf Cafe, Druid Cove, Armenian Tavla (T3); theme picker with live preview, Android perf pass, remove old Tavern/Moonlight (T4). Mockups: the "DiceThrower themes" artifact.
+- **Roll tab layout**: Attack and Damage each have a dice row of flat silhouette buttons (`DieIcon`), two colours (`--atk`, `--dmg`). Tab bar at the bottom, the Roll tab is a raised round button in the centre.
 - **Sound and haptics**: six cues (throw, die hit, settled, nat 20, nat 1, limit blocked), each a sound plus a vibration, in `FeedbackConfig`. The two switches are read when a cue plays. Vibration uses the Android vibrator service (nothing happens in the Editor; turn on `logCues` to see the cues in the Console).
 - A throw is written to the history a moment after the last roll (`historyCommitDelaySeconds`), so tapping three dice quickly is one entry.
 
@@ -34,13 +38,13 @@ Needs the Android Build Support module (SDK, NDK, OpenJDK) for this Editor versi
 | Folder | Contents |
 |---|---|
 | `Scripts/Core` | Pure C#, no Unity references (`DiceThrower.Core`). Dice, rules, rolling, session, and the data layer. |
-| `Scripts/Game` | Unity side of the 3D tray: procedural dice, physics, camera fit, feedback (`FeedbackPlayer`, `Haptics`), config assets for them. |
+| `Scripts/Game` | Unity side of the 3D tray: model dice (`ModelDie`), physics, theme scenes, camera fit, feedback (`FeedbackPlayer`, `Haptics`), config assets for them. |
 | `Scripts/UI` | UI Toolkit views, the press/slide gestures, UI config assets. |
 | `Scripts/Editor` | `ProjectBuilder` (the menu above) with `BuilderPaths`/`BuilderDefaults` (paths and starting values), `BuilderAssets`, `PrefabBuilder`, `SceneBuilder`; `AndroidBuild`; `FeedbackAssets` and `PlaceholderAudio` (the placeholder sounds). |
 | `Tests/EditMode` | NUnit tests for Core. |
-| `UI` | `RollScreen.uxml`, `Tavern.uss` and `Moonlight.uss` (theme variables only), `Roll.uss` (Roll tab), `Pages.uss` (other tabs and the dialog). |
+| `UI` | `RollScreen.uxml`, `Tavern.uss` (base theme variables), one USS per theme, `Roll.uss` (Roll tab), `Pages.uss` (other tabs and the dialog). |
 | `Config` | All tunable numbers and texts as ScriptableObjects. |
-| `Prefabs` | `Die`, `DiceTray`, `RollScreen` (carries the `FeedbackPlayer`). |
+| `Prefabs` | `Die`, `DiceTray`, `RollScreen`; `Themes/<Name>/Theme_<Name>.prefab` per theme (carries the `FeedbackPlayer`). |
 | `Audio` | The placeholder WAVs. Replace a file (same name) or assign other clips in `FeedbackConfig`. |
 
 ## Core
@@ -75,3 +79,7 @@ The save file is `dicethrower_save.json` in `Application.persistentDataPath`.
 ## Conventions
 KISS, DRY, YAGNI. No magic numbers: tunables live in config assets, colours in `Tavern.uss`. Everything is a prefab or asset that can be
 adjusted in the Inspector. Core stays free of Unity references and is covered by EditMode tests.
+
+## Known debt
+- Procedural dice path (`DiceAtlas`, `StrokeFont`, procedural branch in `DiceVisuals`, UV code in `DieBody`, `DiceSkin` body/ink, `Skin_Attack*/Damage*` assets) is unused; the Dice tab lists model skins only. `DieShape` also holds the generator that the tests use. Remove it in a session that can compile.
+- Old cube tray (`PrefabBuilder.BuildTray`, `TrayFloor/TrayRail` materials) is the built-in fallback surface until every theme has a scene (T4).

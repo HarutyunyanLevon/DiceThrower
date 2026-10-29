@@ -4,8 +4,7 @@ using DiceThrower.Core;
 namespace DiceThrower.Game
 {
     /// <summary>
-    /// Look of the dice pictures made from the 3D models: the live rotating d20 of the Dice tab and the sprite atlases
-    /// (DiceThrower > Render Dice Sprite Atlases). One camera and one light setup serve both, so they match.
+    /// Look of the dice pictures made from the 3D models: the live rotating d20 of the Dice tab.
     /// </summary>
     [CreateAssetMenu(menuName = "DiceThrower/Dice Preview Config", fileName = "DicePreviewConfig")]
     public sealed class DicePreviewConfig : ScriptableObject
@@ -15,12 +14,6 @@ namespace DiceThrower.Game
         public int textureSize = 256;
         [Tooltip("Degrees per second the die turns around the vertical axis.")]
         public float spinDegreesPerSecond = 40f;
-
-        [Header("Sprite atlas (editor tool)")]
-        [Tooltip("Pixels per side of one die cell. An atlas is one row of seven cells.")]
-        public int spriteSize = 128;
-        [Tooltip("Folder of the generated atlas PNGs.")]
-        public string atlasFolder = "Assets/DiceModels/Atlases";
 
         [Header("Camera")]
         [Tooltip("Where the preview dice stand. Far from the tray, so the tray camera and the preview camera never see each other's dice.")]
@@ -47,7 +40,7 @@ namespace DiceThrower.Game
             new DieTilt { kind = DieKind.D20, degrees = new Vector2(-20f, 0f) },
         };
 
-        [Header("Light (only the sprite tool adds its own; the live preview uses the scene's light)")]
+        [Header("Light (used when the rig adds its own light)")]
         public Vector3 lightEuler = new Vector3(55f, -25f, 0f);
         public float lightIntensity = 1.1f;
 
