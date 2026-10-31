@@ -15,15 +15,15 @@ namespace DiceThrower.UI
     }
 
     /// <summary>
-    /// A named theme: a style sheet that redefines the colour variables of Tavern.uss (and may restyle frames and fonts),
-    /// and optionally a 3D scene (play surface, backdrop, lights). Without a scene the tray's own surface is shown.
+    /// A named theme: a style sheet that redefines the colour variables of Tavern.uss (and may restyle frames and fonts)
+    /// and a 3D scene (play surface, backdrop, lights). Both are made by the theme's builder (DiceThrower > Themes).
     /// </summary>
     [Serializable]
     public sealed class ThemeSpec
     {
         public string name = "Theme";
         public StyleSheet sheet;
-        [Tooltip("Optional. The theme's 3D scene prefab (a ThemeScene on its root).")]
+        [Tooltip("The theme's 3D scene prefab (a ThemeScene on its root).")]
         public ThemeScene scene;
     }
 
@@ -46,7 +46,7 @@ namespace DiceThrower.UI
         [Header("Dice sets (the Dice tab lists these, in this order; the saved choice is an index, so new ones go at the end)")]
         public DiceSetSpec[] diceSets = new DiceSetSpec[0];
 
-        [Header("Themes (the Settings tab cycles through these)")]
+        [Header("Themes (the theme picker in Settings lists these, in this order; the saved choice is an index)")]
         public ThemeSpec[] themes = new ThemeSpec[0];
 
         [Header("Settings texts")]
@@ -54,6 +54,10 @@ namespace DiceThrower.UI
         public string usageWindowFormat = "{0} throws";
         [Tooltip("{0} = seconds")]
         public string settleSecondsFormat = "{0} s";
+
+        [Header("Theme picker")]
+        public string themePickerTitle = "Theme";
+        public string themePickerApplyText = "Apply";
 
         [Header("Preset editor and dialog texts")]
         public string cancelText = "Cancel";
@@ -99,12 +103,12 @@ namespace DiceThrower.UI
             return diceSets[Mathf.Clamp(diceSetIndex, 0, diceSets.Length - 1)].skin;
         }
 
-        /// <summary>At least one theme with a style sheet, and at least one dice set per roll set, each with a skin.</summary>
+        /// <summary>At least one theme with a style sheet and a scene, and at least one dice set per roll set, each with a skin.</summary>
         public bool IsValid()
         {
             if (themes == null || themes.Length == 0) return false;
             for (int i = 0; i < themes.Length; i++)
-                if (themes[i].sheet == null) return false;
+                if (themes[i].sheet == null || themes[i].scene == null) return false;
             if (diceSets == null || diceSets.Length < RollSession.SetCount) return false;
             for (int i = 0; i < diceSets.Length; i++)
                 if (diceSets[i] == null || diceSets[i].skin == null) return false;

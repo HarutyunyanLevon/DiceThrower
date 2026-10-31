@@ -1,0 +1,122 @@
+/* Druid Cove theme: moss green panels with bark-brown edges and amber highlights; Bellota Text headings, Nunito text.
+   ThemeApplier adds this sheet last, so where a rule has the same specificity as one in Roll.uss / Pages.uss, this one wins. */
+:root {
+    --text: #eef6d8;
+    --muted: #b5c993;
+    --accent: #f0c460;
+    --accent-ink: #2a1c08;
+    --off: #6a7f58;
+    --panel: #30522a;
+    --panel-edge: #8b6a3f;
+    --bg: #162a1c;
+    --btn: #345a2c;
+    --btn-edge: #8b6a3f;
+    --scrim: rgba(16, 32, 20, 0.9);
+
+    --atk: #f1f7dc;
+    --atk-ink: #2d4a24;
+    --atk-edge: #8b6a3f;
+    --dmg: #6fa84a;
+    --dmg-ink: #0f240c;
+    --dmg-edge: #dff0aa;
+
+    --adv-n: #3f6a34;
+    --adv-n-edge: #dff0aa;
+    --adv-n-ink: #eef6d8;
+    --adv-a: #5fc47a;
+    --adv-a-edge: #b8f0c6;
+    --adv-a-ink: #04210f;
+    --adv-d: #e8806a;
+    --adv-d-edge: #ffd0c4;
+    --adv-d-ink: #2a0c06;
+}
+
+/* ---------- fonts: Bellota Text for headings, Nunito for the rest ---------- */
+.screen {
+    -unity-font-definition: url("/Assets/Fonts/Nunito-SemiBold.ttf");
+}
+.caption,
+.total,
+.tab__text,
+.action__text--primary,
+.dialog__title,
+.mod__text {
+    -unity-font-definition: url("/Assets/Fonts/BellotaText-Bold.ttf");
+    -unity-font-style: normal;
+    letter-spacing: 0px;
+}
+.caption { font-size: 10px; }
+.tab__text { font-size: 12px; }
+.formula { font-size: 15px; }
+.breakdown { font-size: 14px; }
+
+/* ---------- panel frame (9-slice) ---------- */
+.set-header,
+.chip,
+.tabbar,
+.dialog__card,
+.picker,
+.toast {
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url("/Assets/UI/Druid/Ui_DruidPanel.png");
+    -unity-slice-left: 32;
+    -unity-slice-right: 32;
+    -unity-slice-top: 32;
+    -unity-slice-bottom: 32;
+    -unity-slice-scale: 0.5px;
+    border-width: 0;
+    border-radius: 0;
+}
+.chip.pressed {
+    background-color: rgba(0, 0, 0, 0);
+    -unity-background-image-tint-color: rgb(190, 215, 170);
+}
+
+/* ---------- buttons: moss green for the quiet ones, amber for the main one ---------- */
+.action--ghost,
+.action--danger {
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url("/Assets/UI/Druid/Ui_DruidButton.png");
+    -unity-slice-left: 32;
+    -unity-slice-right: 32;
+    -unity-slice-top: 32;
+    -unity-slice-bottom: 32;
+    -unity-slice-scale: 0.5px;
+    border-width: 0;
+    border-radius: 0;
+}
+.action--primary {
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url("/Assets/UI/Druid/Ui_DruidButtonAmber.png");
+    -unity-slice-left: 32;
+    -unity-slice-right: 32;
+    -unity-slice-top: 32;
+    -unity-slice-bottom: 32;
+    -unity-slice-scale: 0.5px;
+    border-width: 0;
+    border-radius: 0;
+}
+
+/* ---------- tabs: the Roll tab as a round coin ---------- */
+.tab { border-radius: 16px 16px 4px 4px; }
+.tab--roll,
+.tab--roll.tab--active {
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url("/Assets/UI/Druid/Ui_DruidRollCoin.png");
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: rgb(190, 180, 150);
+    border-width: 0;
+    border-radius: 0;
+}
+.tab--roll.tab--active { -unity-background-image-tint-color: rgb(255, 255, 255); }
+.tab--roll .tab__text { color: #2a1c08; }
+
+/* ---------- dice buttons and switches ---------- */
+.die-btn {
+    background-color: rgba(52, 90, 44, 0.92);
+    border-color: var(--btn-edge);
+    border-radius: 20px;
+}
+.die-btn.pressed { background-color: rgba(240, 196, 96, 0.35); }
+.switch,
+.switch__knob { border-radius: 10px; }

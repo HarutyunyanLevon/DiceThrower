@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3438d23ee0cfcf4ea211f0a19e38a7d, type: 3}
+  m_Name: SurfaceStyle
+  m_EditorClassIdentifier: DiceThrower.Game::DiceThrower.Game.RoundSurfaceStyle
+  outerDiameter: 8.2
+  wallInset: 0.5
+  discInset: 0.2
+  wallThickness: 0.6
+  wallHeight: 14
+  wallSegments: 32
+  groundThickness: 0.5
+  bounciness: 0.35
+  dynamicFriction: 0.5
+  staticFriction: 0.6
+  floorDepth: 0
+  floorSize: 80
+  floorTiling: 14
+  lightColor: {r: 0.85, g: 0.3, b: 0.25, a: 1}
+  lightIntensity: 0.3
+  lightEuler: {x: 65, y: -25, z: 0}
+  cameraBackground: {r: 0.03, g: 0.01, b: 0.02, a: 1}
+  ambientColor: {r: 0.08, g: 0.035, b: 0.045, a: 1}

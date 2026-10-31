@@ -1,0 +1,122 @@
+/* Sky Elf Cafe theme: cream and gold, like a marble cafe table in the clouds; Italiana headings, Jost text.
+   ThemeApplier adds this sheet last, so where a rule has the same specificity as one in Roll.uss / Pages.uss, this one wins. */
+:root {
+    --text: #4a3a1c;
+    --muted: #8a7747;
+    --accent: #c9a24a;
+    --accent-ink: #3a2a0c;
+    --off: #c8b98f;
+    --panel: #fff8e6;
+    --panel-edge: #c9a24a;
+    --bg: #fbf3dc;
+    --btn: #f6e8c4;
+    --btn-edge: #c9a24a;
+    --scrim: rgba(250, 244, 225, 0.92);
+
+    --atk: #fffdf4;
+    --atk-ink: #5a4318;
+    --atk-edge: #c9a24a;
+    --dmg: #e8c36a;
+    --dmg-ink: #3a2a0c;
+    --dmg-edge: #8c6824;
+
+    --adv-n: #f6e8c4;
+    --adv-n-edge: #c9a24a;
+    --adv-n-ink: #4a3a1c;
+    --adv-a: #8fd6a6;
+    --adv-a-edge: #2f8a55;
+    --adv-a-ink: #0b3a1c;
+    --adv-d: #f2a3a3;
+    --adv-d-edge: #b24a4a;
+    --adv-d-ink: #4a0f0f;
+}
+
+/* ---------- fonts: Italiana for headings, Jost for the rest ---------- */
+.screen {
+    -unity-font-definition: url("/Assets/Fonts/Jost-SemiBold.ttf");
+}
+.caption,
+.total,
+.tab__text,
+.action__text--primary,
+.dialog__title,
+.mod__text {
+    -unity-font-definition: url("/Assets/Fonts/Italiana-Regular.ttf");
+    -unity-font-style: normal;
+    letter-spacing: 1px;
+}
+.caption { font-size: 10px; }
+.tab__text { font-size: 12px; }
+.formula { font-size: 15px; }
+.breakdown { font-size: 14px; }
+
+/* ---------- panel frame (9-slice) ---------- */
+.set-header,
+.chip,
+.tabbar,
+.dialog__card,
+.picker,
+.toast {
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url("/Assets/UI/Elf/Ui_ElfPanel.png");
+    -unity-slice-left: 32;
+    -unity-slice-right: 32;
+    -unity-slice-top: 32;
+    -unity-slice-bottom: 32;
+    -unity-slice-scale: 0.5px;
+    border-width: 0;
+    border-radius: 0;
+}
+.chip.pressed {
+    background-color: rgba(0, 0, 0, 0);
+    -unity-background-image-tint-color: rgb(235, 220, 180);
+}
+
+/* ---------- buttons: cream with a gold line for the quiet ones, solid gold for the main one ---------- */
+.action--ghost,
+.action--danger {
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url("/Assets/UI/Elf/Ui_ElfButton.png");
+    -unity-slice-left: 32;
+    -unity-slice-right: 32;
+    -unity-slice-top: 32;
+    -unity-slice-bottom: 32;
+    -unity-slice-scale: 0.5px;
+    border-width: 0;
+    border-radius: 0;
+}
+.action--primary {
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url("/Assets/UI/Elf/Ui_ElfButtonGold.png");
+    -unity-slice-left: 32;
+    -unity-slice-right: 32;
+    -unity-slice-top: 32;
+    -unity-slice-bottom: 32;
+    -unity-slice-scale: 0.5px;
+    border-width: 0;
+    border-radius: 0;
+}
+
+/* ---------- tabs: the Roll tab as a round coin ---------- */
+.tab { border-radius: 14px 14px 3px 3px; }
+.tab--roll,
+.tab--roll.tab--active {
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url("/Assets/UI/Elf/Ui_ElfRollCoin.png");
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: rgb(215, 200, 160);
+    border-width: 0;
+    border-radius: 0;
+}
+.tab--roll.tab--active { -unity-background-image-tint-color: rgb(255, 255, 255); }
+.tab--roll .tab__text { color: #3a2a0c; }
+
+/* ---------- dice buttons and switches ---------- */
+.die-btn {
+    background-color: rgba(246, 232, 196, 0.95);
+    border-color: var(--btn-edge);
+    border-radius: 18px;
+}
+.die-btn.pressed { background-color: rgba(201, 162, 74, 0.35); }
+.switch,
+.switch__knob { border-radius: 10px; }

@@ -15,6 +15,8 @@ namespace DiceThrower.Game
         private Transform surface;
         [SerializeField, Tooltip("How high the rim stands above the surface (the camera keeps the rim in view). 0 = ignore.")]
         private float rimHeight;
+        [SerializeField, Tooltip("A round play area: the surface marker's x scale is its diameter, and the tray throws and places dice inside that circle instead of the rectangle.")]
+        private bool round;
 
         [Header("Main light")]
         [SerializeField] private Color lightColor = Color.white;
@@ -27,6 +29,7 @@ namespace DiceThrower.Game
 
         public Transform Surface { get { return surface; } }
         public float RimHeight { get { return rimHeight; } }
+        public bool Round { get { return round; } }
         public Color LightColor { get { return lightColor; } }
         public float LightIntensity { get { return lightIntensity; } }
         public Vector3 LightEuler { get { return lightEuler; } }

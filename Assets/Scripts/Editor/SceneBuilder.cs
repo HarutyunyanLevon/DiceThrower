@@ -13,6 +13,28 @@ namespace DiceThrower.EditorTools
     /// <summary>Builds the Roll scene: camera, light, tray, event system and the RollScreen.</summary>
     internal static class SceneBuilder
     {
+        /// <summary>
+        /// Makes sure the open scene has a working tray: an object whose prefab is gone (an old leather tray; Unity keeps it as an empty placeholder
+        /// with no components) is removed, and the DiceTray prefab is put in the scene if no tray is there. A scene that is fine is left as it is.
+        /// </summary>
+        internal static void RepairTray()
+        {
+            bool changed = false;
+            foreach (GameObject root in EditorSceneManager.GetActiveScene().GetRootGameObjects())
+            {
+                if (!PrefabUtility.IsPrefabAssetMissing(root) && PrefabUtility.GetPrefabInstanceStatus(root) != PrefabInstanceStatus.MissingAsset) continue;
+                Debug.Log("DiceThrower: removing '" + root.name + "' from the scene (its prefab is missing).");
+                Object.DestroyImmediate(root);
+                changed = true;
+            }
+            if (Object.FindAnyObjectByType<DiceTray>() == null)
+            {
+                PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(BuilderPaths.TrayPrefab));
+                changed = true;
+            }
+            if (changed) EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
+        }
+
         internal static void BuildScene(float cameraPitch)
         {
             EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);

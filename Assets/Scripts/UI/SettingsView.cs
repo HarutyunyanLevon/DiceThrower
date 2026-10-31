@@ -6,7 +6,7 @@ using DiceThrower.Game;
 
 namespace DiceThrower.UI
 {
-    /// <summary>The Settings tab: sound and haptics switches, physics dice and settle time, colour theme, the chip usage window and a clear-history button. Every change is saved at once.</summary>
+    /// <summary>The Settings tab: sound and haptics switches, physics dice and settle time, theme (opens the theme picker), the chip usage window and a clear-history button. Every change is saved at once.</summary>
     public sealed class SettingsView
     {
         private const string SwitchOnClass = "switch--on";
@@ -18,19 +18,21 @@ namespace DiceThrower.UI
         private readonly AppData _data;
         private readonly ThemeApplier _theme;
         private readonly DialogView _dialog;
+        private readonly Action<int> _openThemePicker;
         private readonly Action _onThrowChanged;
         private readonly Action<string> _toast;
         private readonly VisualElement _soundSwitch, _hapticsSwitch, _clearButton, _windowMinus, _windowPlus, _physicsSwitch, _settleMinus, _settlePlus;
         private readonly Label _themeValue, _windowValue, _settleValue;
 
         public SettingsView(VisualElement root, DataUiConfig cfg, RulesConfig rules, AppData data, ThemeApplier theme,
-                            DialogView dialog, Action onThrowChanged, Action<string> toast)
+                            DialogView dialog, Action<int> openThemePicker, Action onThrowChanged, Action<string> toast)
         {
             _cfg = cfg;
             _rules = rules;
             _data = data;
             _theme = theme;
             _dialog = dialog;
+            _openThemePicker = openThemePicker;
             _onThrowChanged = onThrowChanged;
             _toast = toast;
 
@@ -51,7 +53,7 @@ namespace DiceThrower.UI
             PressGesture.Tappable(root.Q<VisualElement>("row-physics"), () => { _data.Settings.PhysicsDice = !_data.Settings.PhysicsDice; Changed(); _onThrowChanged(); });
             PressGesture.Tappable(_settleMinus, () => StepSettle(-_rules.settleSecondsStep));
             PressGesture.Tappable(_settlePlus, () => StepSettle(_rules.settleSecondsStep));
-            PressGesture.Tappable(root.Q<VisualElement>("row-theme"), NextTheme);
+            PressGesture.Tappable(root.Q<VisualElement>("row-theme"), () => _openThemePicker(_data.Settings.Theme));
             PressGesture.Tappable(_windowMinus, () => StepWindow(-_rules.usageWindowStep));
             PressGesture.Tappable(_windowPlus, () => StepWindow(_rules.usageWindowStep));
             PressGesture.Tappable(_clearButton, AskClearHistory);
@@ -100,10 +102,10 @@ namespace DiceThrower.UI
             Refresh();
         }
 
-        private void NextTheme()
+        /// <summary>The theme picker's Apply: store the chosen theme.</summary>
+        public void SetTheme(int index)
         {
-            _data.Settings.Theme = (_theme.Clamp(_data.Settings.Theme) + 1) % _theme.Count;
-            _theme.Apply(_data.Settings.Theme);
+            _data.Settings.Theme = _theme.Clamp(index);
             Changed();
         }
 

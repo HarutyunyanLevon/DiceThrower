@@ -53,6 +53,7 @@ namespace DiceThrower.UI
         private HistoryView _history;
         private DiceTabView _diceTab;
         private SettingsView _settings;
+        private ThemePicker _themePicker;
         private ThemeApplier _theme;
         private ThemeSceneHost _themeHost;
         private readonly List<DieReading> _readings = new List<DieReading>();
@@ -198,7 +199,8 @@ namespace DiceThrower.UI
                                        preset => LoadSetup(preset.Sets, preset.Id), EditPreset);
             _history = new HistoryView(_root, dataConfig, captions, config.slideThresholdPx, _data, RethrowEntry);
             _diceTab = new DiceTabView(_root, dataConfig, config, previewConfig, _data.Settings.DiceSets, OnDiceSetChanged);
-            _settings = new SettingsView(_root, dataConfig, rules, _data, _theme, _dialog, ApplyThrowSettings, _toast.Show);
+            _themePicker = new ThemePicker(_root, dataConfig, _theme, () => SelectTab(TabRoll), index => _settings.SetTheme(index));
+            _settings = new SettingsView(_root, dataConfig, rules, _data, _theme, _dialog, _themePicker.Open, ApplyThrowSettings, _toast.Show);
         }
 
         private void SelectTab(int index)

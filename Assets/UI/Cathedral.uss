@@ -1,0 +1,122 @@
+/* Cathedral theme: deep violet panels with gold lines and a soft halo, pointed-arch buttons, Cinzel Decorative headings.
+   ThemeApplier adds this sheet last, so where a rule has the same specificity as one in Roll.uss / Pages.uss, this one wins. */
+:root {
+    --text: #fbf5ff;
+    --muted: #cdbfe6;
+    --accent: #e3bf6a;
+    --accent-ink: #241447;
+    --off: #7d6ba8;
+    --panel: #281652;
+    --panel-edge: #e3bf6a;
+    --bg: #120a28;
+    --btn: #301e5c;
+    --btn-edge: #b08a30;
+    --scrim: rgba(18, 10, 40, 0.88);
+
+    --atk: #fffdf4;
+    --atk-ink: #3b2470;
+    --atk-edge: #b08a30;
+    --dmg: #6b4bb0;
+    --dmg-ink: #ffffff;
+    --dmg-edge: #e3bf6a;
+
+    --adv-n: #4a3585;
+    --adv-n-edge: #e3bf6a;
+    --adv-n-ink: #fbf5ff;
+    --adv-a: #3fb36b;
+    --adv-a-edge: #a6f0c2;
+    --adv-a-ink: #04210f;
+    --adv-d: #ff7a8a;
+    --adv-d-edge: #ffd0d6;
+    --adv-d-ink: #1a0b12;
+}
+
+/* ---------- fonts: Cinzel Decorative for headings, Cormorant Garamond for the rest ---------- */
+.screen {
+    -unity-font-definition: url("/Assets/Fonts/CormorantGaramond-SemiBold.ttf");
+}
+.caption,
+.total,
+.tab__text,
+.action__text--primary,
+.dialog__title,
+.mod__text {
+    -unity-font-definition: url("/Assets/Fonts/CinzelDecorative-Bold.ttf");
+    -unity-font-style: normal;
+    letter-spacing: 1px;
+}
+.caption { font-size: 10px; }
+.tab__text { font-size: 12px; }
+.formula { font-size: 15px; }
+.breakdown { font-size: 14px; }
+
+/* ---------- panel frame (9-slice, gold double line, diamond corners) ---------- */
+.set-header,
+.chip,
+.tabbar,
+.dialog__card,
+.picker,
+.toast {
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url("/Assets/UI/Cathedral/Ui_CathPanel.png");
+    -unity-slice-left: 32;
+    -unity-slice-right: 32;
+    -unity-slice-top: 32;
+    -unity-slice-bottom: 32;
+    -unity-slice-scale: 0.5px;
+    border-width: 0;
+    border-radius: 0;
+}
+.chip.pressed {
+    background-color: rgba(0, 0, 0, 0);
+    -unity-background-image-tint-color: rgb(200, 180, 235);
+}
+
+/* ---------- buttons: pointed-arch violet for the quiet ones, gold leaf for the main one ---------- */
+.action--ghost,
+.action--danger {
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url("/Assets/UI/Cathedral/Ui_CathButton.png");
+    -unity-slice-left: 32;
+    -unity-slice-right: 32;
+    -unity-slice-top: 32;
+    -unity-slice-bottom: 32;
+    -unity-slice-scale: 0.5px;
+    border-width: 0;
+    border-radius: 0;
+}
+.action--primary {
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url("/Assets/UI/Cathedral/Ui_CathButtonGold.png");
+    -unity-slice-left: 32;
+    -unity-slice-right: 32;
+    -unity-slice-top: 32;
+    -unity-slice-bottom: 32;
+    -unity-slice-scale: 0.5px;
+    border-width: 0;
+    border-radius: 0;
+}
+
+/* ---------- tabs: arched tops, and the Roll tab as a gold rose-window seal ---------- */
+.tab { border-radius: 14px 14px 3px 3px; }
+.tab--roll,
+.tab--roll.tab--active {
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url("/Assets/UI/Cathedral/Ui_CathRollCoin.png");
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: rgb(190, 175, 150);
+    border-width: 0;
+    border-radius: 0;
+}
+.tab--roll.tab--active { -unity-background-image-tint-color: rgb(255, 255, 255); }
+.tab--roll .tab__text { color: var(--accent-ink); }
+
+/* ---------- dice buttons: pointed arches with a gold edge ---------- */
+.die-btn {
+    background-color: rgba(48, 30, 92, 0.9);
+    border-color: var(--btn-edge);
+    border-radius: 18px 18px 4px 4px;
+}
+.die-btn.pressed { background-color: rgba(227, 191, 106, 0.3); }
+.switch,
+.switch__knob { border-radius: 6px; }

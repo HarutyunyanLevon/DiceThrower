@@ -12,8 +12,6 @@ namespace DiceThrower.EditorTools
         public const string SceneDir = "Assets/Scenes";
 
         public const string DiceMaterial = MaterialDir + "/DiceLit.mat";
-        public const string FloorMaterial = MaterialDir + "/TrayFloor.mat";
-        public const string RailMaterial = MaterialDir + "/TrayRail.mat";
         public const string Physics = ConfigDir + "/DicePhysics.asset";
         public const string TrayConfig = ConfigDir + "/TrayConfig.asset";
         public const string CameraFit = ConfigDir + "/CameraFitConfig.asset";
@@ -26,26 +24,15 @@ namespace DiceThrower.EditorTools
         public const string TrayPrefab = PrefabDir + "/DiceTray.prefab";
         public const string ScreenPrefab = PrefabDir + "/RollScreen.prefab";
         public const string PanelSettings = UiDir + "/RollPanelSettings.asset";
-        public const string TavernTheme = UiDir + "/Tavern.uss";
-        public const string MoonlightTheme = UiDir + "/Moonlight.uss";
         public const string Uxml = UiDir + "/RollScreen.uxml";
         public const string Scene = SceneDir + "/Roll.unity";
     }
 
     internal static class BuilderDefaults
     {
-        // tray geometry (world units)
-        public const float TrayWidth = 7f, TrayDepth = 10.5f;
-        public const float WallThickness = 0.6f, RailHeight = 0.5f, WallHeight = 14f, FloorThickness = 0.5f;
-        public static readonly Color Floor = new Color(0.11f, 0.33f, 0.25f);
-        public static readonly Color Rail = new Color(0.54f, 0.35f, 0.17f);
-
         // die rigidbody and surface
         public const float DieMass = 1f, LinearDamping = 0.05f, AngularDamping = 0.15f, SleepThreshold = 0.3f;
         public const float Bounciness = 0.25f, DynamicFriction = 0.45f, StaticFriction = 0.55f;
-
-        // themes
-        public const string TavernThemeName = "Tavern & Leather", MoonlightThemeName = "Moonlight";
 
         // scene rig
         public static readonly Color CameraBackground = new Color(0.10f, 0.31f, 0.23f);

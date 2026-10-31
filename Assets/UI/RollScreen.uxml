@@ -108,6 +108,19 @@
 
         <ui:Label name="toast" text="" class="lbl toast" picking-mode="Ignore" />
 
+        <ui:VisualElement name="theme-sheet" class="theme-sheet" picking-mode="Position">
+            <ui:Label name="theme-title" text="" class="lbl dialog__title" />
+            <ui:VisualElement name="theme-cards" class="theme-cards" />
+            <ui:VisualElement class="dialog__buttons">
+                <ui:VisualElement name="theme-cancel" class="action action--ghost">
+                    <ui:Label name="theme-cancel-text" text="" class="lbl dialog__btn-text" />
+                </ui:VisualElement>
+                <ui:VisualElement name="theme-apply" class="action action--primary">
+                    <ui:Label name="theme-apply-text" text="" class="lbl dialog__btn-text" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
         <ui:VisualElement name="dialog" class="dialog">
             <ui:VisualElement class="dialog__card">
                 <ui:Label name="dialog-title" text="" class="lbl dialog__title" />

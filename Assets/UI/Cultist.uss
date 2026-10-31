@@ -1,0 +1,120 @@
+/* Old One Cultist Hideout theme: near-black panels with cracked crimson edges, bone text, blood red accents, grimoire letterforms.
+   ThemeApplier adds this sheet last, so where a rule has the same specificity as one in Roll.uss / Pages.uss, this one wins. */
+:root {
+    --text: #f0e2c2;
+    --muted: #b69a86;
+    --accent: #dc2f40;
+    --accent-ink: #fff3e6;
+    --off: #6a4a4e;
+    --panel: #150709;
+    --panel-edge: #7a1018;
+    --bg: #0b0507;
+    --btn: #150709;
+    --btn-edge: #7a1018;
+    --scrim: rgba(8, 2, 4, 0.9);
+
+    --atk: #e9dfc4;
+    --atk-ink: #1a0508;
+    --atk-edge: #c4202e;
+    --dmg: #7a0c14;
+    --dmg-ink: #f3e6c0;
+    --dmg-edge: #e8d98a;
+
+    --adv-n: #3a0d12;
+    --adv-n-edge: #c4202e;
+    --adv-n-ink: #f0e2c2;
+    --adv-a: #3fb36b;
+    --adv-a-edge: #a6f0c2;
+    --adv-a-ink: #04210f;
+    --adv-d: #ff6a3d;
+    --adv-d-edge: #ffc2a8;
+    --adv-d-ink: #14090a;
+}
+
+/* ---------- fonts: IM Fell English SC for headings and the numbers that matter, IM Fell English for the rest ---------- */
+.screen {
+    -unity-font-definition: url("/Assets/Fonts/IMFellEnglish-Regular.ttf");
+}
+.caption,
+.total,
+.tab__text,
+.action__text--primary,
+.dialog__title,
+.mod__text {
+    -unity-font-definition: url("/Assets/Fonts/IMFellEnglishSC-Regular.ttf");
+    -unity-font-style: normal;
+    letter-spacing: 1px;
+}
+.total { font-size: 27px; }
+.tab__text { font-size: 15px; }
+
+/* ---------- panel frame (9-slice, notched corners, cracked crimson edge) ---------- */
+.set-header,
+.chip,
+.tabbar,
+.dialog__card,
+.picker,
+.toast {
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url("/Assets/UI/Cultist/Ui_CultPanel.png");
+    -unity-slice-left: 32;
+    -unity-slice-right: 32;
+    -unity-slice-top: 32;
+    -unity-slice-bottom: 32;
+    -unity-slice-scale: 0.5px;
+    border-width: 0;
+    border-radius: 0;
+}
+.chip.pressed {
+    background-color: rgba(0, 0, 0, 0);
+    -unity-background-image-tint-color: rgb(200, 150, 150);
+}
+
+/* ---------- buttons: black for the quiet ones, blood red with bone text for the main one ---------- */
+.action--ghost,
+.action--danger {
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url("/Assets/UI/Cultist/Ui_CultButton.png");
+    -unity-slice-left: 32;
+    -unity-slice-right: 32;
+    -unity-slice-top: 32;
+    -unity-slice-bottom: 32;
+    -unity-slice-scale: 0.5px;
+    border-width: 0;
+    border-radius: 0;
+}
+.action--primary {
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url("/Assets/UI/Cultist/Ui_CultButtonRed.png");
+    -unity-slice-left: 32;
+    -unity-slice-right: 32;
+    -unity-slice-top: 32;
+    -unity-slice-bottom: 32;
+    -unity-slice-scale: 0.5px;
+    border-width: 0;
+    border-radius: 0;
+}
+
+/* ---------- tabs: hard-cut pills, and the Roll tab as a blood-red seal ---------- */
+.tab { border-radius: 2px; }
+.tab--roll,
+.tab--roll.tab--active {
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url("/Assets/UI/Cultist/Ui_CultRollCoin.png");
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: rgb(170, 140, 140);
+    border-width: 0;
+    border-radius: 0;
+}
+.tab--roll.tab--active { -unity-background-image-tint-color: rgb(255, 255, 255); }
+.tab--roll .tab__text { color: var(--accent-ink); }
+
+/* ---------- dice buttons: black slabs with a dried-blood edge ---------- */
+.die-btn {
+    background-color: rgba(0, 0, 0, 0.45);
+    border-color: var(--btn-edge);
+    border-radius: 2px;
+}
+.die-btn.pressed { background-color: rgba(196, 32, 46, 0.3); }
+.switch,
+.switch__knob { border-radius: 2px; }

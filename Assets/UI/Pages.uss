@@ -165,6 +165,41 @@
     color: var(--adv-d);
 }
 
+/* ---------- theme picker: a sheet over the bottom of the Roll tab, the 3D scene stays visible above it ---------- */
+.theme-sheet {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: none;
+    padding: 14px 12px 12px 12px;
+    background-color: var(--panel);
+    border-top-width: 2px;
+    border-color: var(--panel-edge);
+}
+.theme-sheet--open { display: flex; }
+.theme-cards {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+.theme-card {
+    margin: 4px;
+    padding: 8px 12px;
+    font-size: 15px;
+    color: var(--text);
+    background-color: var(--btn);
+    border-width: 2px;
+    border-color: var(--btn-edge);
+    border-radius: 12px;
+}
+.theme-card--selected {
+    color: var(--accent-ink);
+    background-color: var(--accent);
+    border-color: var(--panel-edge);
+}
+
 /* ---------- dialog ---------- */
 .dialog {
     position: absolute;

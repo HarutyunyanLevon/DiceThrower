@@ -36,7 +36,7 @@ namespace DiceThrower.Game
         public float randomSpawnInset = 0.9f;
 
         [Header("Settling")]
-        [Tooltip("How long the player waits before dice that still move are set where they are is in Settings (RulesConfig.settleSeconds).")]
+        [Tooltip("A die is not judged to be still before it is this old (seconds). How long the player waits before moving dice are set by hand is in Settings (RulesConfig.settleSeconds).")]
         public float minDieAgeSeconds = 0.4f;
         [Tooltip("Squared speed below which a die counts as still.")]
         public float stillLinearSqr = 0.04f;

@@ -25,8 +25,6 @@ namespace DiceThrower.EditorTools
                 BuilderAssets.EnsureFolder(dir);
 
             Material diceMat = BuilderAssets.GetOrCreateMaterial(BuilderPaths.DiceMaterial, Color.white);
-            Material floorMat = BuilderAssets.GetOrCreateMaterial(BuilderPaths.FloorMaterial, BuilderDefaults.Floor);
-            Material railMat = BuilderAssets.GetOrCreateMaterial(BuilderPaths.RailMaterial, BuilderDefaults.Rail);
             PhysicsMaterial dicePhysics = BuilderAssets.GetOrCreatePhysicsMaterial();
 
             var trayConfig = BuilderAssets.GetOrCreate<TrayConfig>(BuilderPaths.TrayConfig);
@@ -40,15 +38,13 @@ namespace DiceThrower.EditorTools
                     new RollSetSpec { caption = "DAMAGE", rowClass = "dice-row--dmg" },
                 };
             });
-            var dataConfig = BuilderAssets.GetOrCreate<DataUiConfig>(BuilderPaths.DataUiConfig); // its dice sets come from DiceThrower > Build Dice Model Sets
+            var dataConfig = BuilderAssets.GetOrCreate<DataUiConfig>(BuilderPaths.DataUiConfig); // its dice sets come from DiceThrower > Build Dice Model Sets, its themes from DiceThrower > Themes > Build All Themes
             var preview = BuilderAssets.GetOrCreate<DicePreviewConfig>(BuilderPaths.PreviewConfig);
-
-            FillThemes(dataConfig); // a DataUiConfig made before themes existed gets them here
 
             FeedbackConfig feedback = FeedbackAssets.GetOrCreate(BuilderPaths.FeedbackConfig);
 
             DieBody diePrefab = BuilderAssets.GetOrCreatePrefab<DieBody>(BuilderPaths.DiePrefab, () => PrefabBuilder.BuildDie(dicePhysics));
-            BuilderAssets.GetOrCreatePrefab<DiceTray>(BuilderPaths.TrayPrefab, () => PrefabBuilder.BuildTray(trayConfig, diePrefab, diceMat, floorMat, railMat));
+            BuilderAssets.GetOrCreatePrefab<DiceTray>(BuilderPaths.TrayPrefab, () => PrefabBuilder.BuildTray(trayConfig, diePrefab, diceMat));
             BuilderAssets.GetOrCreatePrefab<RollScreenView>(BuilderPaths.ScreenPrefab, PrefabBuilder.BuildScreen);
             PrefabBuilder.WireScreenPrefab(uiConfig, rules, cameraFit, dataConfig, preview, feedback); // also fills references and components added after the prefab was first built
 
@@ -57,19 +53,8 @@ namespace DiceThrower.EditorTools
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             EditorSceneManager.OpenScene(BuilderPaths.Scene);
-            Debug.Log("DiceThrower: configs in " + BuilderPaths.ConfigDir + ", prefabs in " + BuilderPaths.PrefabDir + ", scene " + BuilderPaths.Scene + ". Press Play.");
-        }
-
-        /// <summary>Adds the theme list to a DataUiConfig that has none. A list you edited is left alone.</summary>
-        private static void FillThemes(DataUiConfig config)
-        {
-            if (config.themes != null && config.themes.Length > 0) return;
-            config.themes = new[]
-            {
-                new ThemeSpec { name = BuilderDefaults.TavernThemeName, sheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(BuilderPaths.TavernTheme) },
-                new ThemeSpec { name = BuilderDefaults.MoonlightThemeName, sheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(BuilderPaths.MoonlightTheme) },
-            };
-            EditorUtility.SetDirty(config);
+            SceneBuilder.RepairTray();
+            Debug.Log("DiceThrower: configs in " + BuilderPaths.ConfigDir + ", prefabs in " + BuilderPaths.PrefabDir + ", scene " + BuilderPaths.Scene + ". Run DiceThrower > Themes > Build All Themes, then press Play.");
         }
     }
 }

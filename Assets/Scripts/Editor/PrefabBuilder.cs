@@ -31,27 +31,12 @@ namespace DiceThrower.EditorTools
             return go;
         }
 
-        internal static GameObject BuildTray(TrayConfig config, DieBody diePrefab, Material diceMat, Material floorMat, Material railMat)
+        /// <summary>
+        /// The tray holds only the dice and the logic: a theme's scene brings the play surface, rim, walls and look (ThemeSceneHost).
+        /// </summary>
+        internal static GameObject BuildTray(TrayConfig config, DieBody diePrefab, Material diceMat)
         {
-            float w = BuilderDefaults.TrayWidth, d = BuilderDefaults.TrayDepth, t = BuilderDefaults.WallThickness;
-            float wallH = BuilderDefaults.WallHeight, railH = BuilderDefaults.RailHeight;
-
             var root = new GameObject("DiceTray");
-
-            Transform floor = MakeCube(root.transform, "Floor", new Vector3(0f, -BuilderDefaults.FloorThickness * 0.5f, 0f),
-                new Vector3(w + 2f * t, BuilderDefaults.FloorThickness, d + 2f * t), floorMat, true).transform;
-
-            // four sides: a tall invisible collider plus a low visible rail
-            MakeSide(root.transform, "Left", new Vector3(-(w + t) * 0.5f, 0f, 0f), new Vector3(t, wallH, d + 2f * t), railH, railMat);
-            MakeSide(root.transform, "Right", new Vector3((w + t) * 0.5f, 0f, 0f), new Vector3(t, wallH, d + 2f * t), railH, railMat);
-            MakeSide(root.transform, "Near", new Vector3(0f, 0f, -(d + t) * 0.5f), new Vector3(w + 2f * t, wallH, t), railH, railMat);
-            MakeSide(root.transform, "Far", new Vector3(0f, 0f, (d + t) * 0.5f), new Vector3(w + 2f * t, wallH, t), railH, railMat);
-
-            // ceiling so nothing escapes upward
-            var ceiling = new GameObject("Ceiling");
-            ceiling.transform.SetParent(root.transform, false);
-            ceiling.transform.localPosition = new Vector3(0f, wallH, 0f);
-            ceiling.AddComponent<BoxCollider>().size = new Vector3(w + 2f * t, BuilderDefaults.FloorThickness, d + 2f * t);
 
             var dice = new GameObject("Dice");
             dice.transform.SetParent(root.transform, false);
@@ -61,33 +46,9 @@ namespace DiceThrower.EditorTools
             so.FindProperty("config").objectReferenceValue = config;
             so.FindProperty("diePrefab").objectReferenceValue = diePrefab;
             so.FindProperty("dieMaterial").objectReferenceValue = diceMat;
-            so.FindProperty("floor").objectReferenceValue = floor;
             so.FindProperty("diceRoot").objectReferenceValue = dice.transform;
             so.ApplyModifiedPropertiesWithoutUndo();
             return root;
-        }
-
-        private static void MakeSide(Transform parent, string name, Vector3 center, Vector3 colliderSize, float railHeight, Material railMat)
-        {
-            var wall = new GameObject(name + "Wall");
-            wall.transform.SetParent(parent, false);
-            wall.transform.localPosition = center + new Vector3(0f, colliderSize.y * 0.5f, 0f);
-            wall.AddComponent<BoxCollider>().size = colliderSize;
-
-            MakeCube(parent, name + "Rail", center + new Vector3(0f, railHeight * 0.5f, 0f),
-                new Vector3(colliderSize.x, railHeight, colliderSize.z), railMat, false);
-        }
-
-        private static GameObject MakeCube(Transform parent, string name, Vector3 pos, Vector3 scale, Material mat, bool keepCollider)
-        {
-            GameObject go = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            go.name = name;
-            go.transform.SetParent(parent, false);
-            go.transform.localPosition = pos;
-            go.transform.localScale = scale;
-            go.GetComponent<MeshRenderer>().sharedMaterial = mat;
-            if (!keepCollider) Object.DestroyImmediate(go.GetComponent<Collider>());
-            return go;
         }
 
         internal static GameObject BuildScreen()

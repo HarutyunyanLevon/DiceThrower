@@ -6,8 +6,8 @@ using DiceThrower.Core;
 namespace DiceThrower.Game
 {
     /// <summary>
-    /// Runtime side of the DiceTray prefab. The prefab holds the floor, rails and invisible walls
-    /// (edit them in Unity); this throws the planned dice and waits until everything lies still (or the settle time runs out,
+    /// Runtime side of the DiceTray prefab. The prefab holds only the dice; the play surface, rim and invisible walls come
+    /// from the active theme's scene (ThemeSceneHost, edit them with the theme builders); this throws the planned dice and waits until everything lies still (or the settle time runs out,
     /// or the player taps the tray). What the dice show is the result: <see cref="ReadDice"/> hands it to the session.
     /// Dice that come with a decided value (physics switched off) are just placed showing it.
     /// </summary>
@@ -16,9 +16,10 @@ namespace DiceThrower.Game
         [SerializeField] private TrayConfig config;
         [SerializeField] private DieBody diePrefab;
         [SerializeField, Tooltip("URP Lit material that the numbered dice are cloned from.")] private Material dieMaterial;
-        [SerializeField, Tooltip("The floor slab, or for the leather trays an invisible marker. Its x / z scale is the tray's outer size, which the camera fits to the screen.")] private Transform floor;
-        [SerializeField, Tooltip("How high the rim stands above the floor. The camera fit keeps the rim in view too. 0 = ignore.")] private float height;
+        [SerializeField, Tooltip("Set at runtime by the theme's scene: the marker whose x / z scale is the tray's outer size, which the camera fits to the screen.")] private Transform floor;
+        [SerializeField, Tooltip("Set at runtime by the theme's scene: how high the rim stands above the floor. The camera fit keeps the rim in view too. 0 = ignore.")] private float height;
         [SerializeField, Tooltip("Parent of the spawned dice.")] private Transform diceRoot;
+        [SerializeField, Tooltip("A round play area (set by a theme scene): the marker's x scale is its diameter.")] private bool round;
 
         private readonly List<DieBody> _dice = new List<DieBody>();
         private bool _rolling;
@@ -46,11 +47,28 @@ namespace DiceThrower.Game
         /// <summary>Parent of the spawned dice.</summary>
         public Transform DiceRoot { get { return diceRoot; } }
 
-        /// <summary>A theme's scene brings its own play surface: the marker that gives the outer size and the rim height.</summary>
-        public void SetSurface(Transform floorMarker, float rimHeight)
+        /// <summary>The play area is a circle (its diameter is the marker's x scale), not a rectangle.</summary>
+        public bool Round { get { return round; } }
+
+        /// <summary>A theme's scene brings its own play surface: the marker that gives the outer size and the rim height. Dice already on the tray are moved inside it.</summary>
+        public void SetSurface(Transform floorMarker, float rimHeight, bool isRound)
         {
             floor = floorMarker;
             height = rimHeight;
+            round = isRound;
+            KeepDiceInside();
+        }
+
+        /// <summary>The new surface can be smaller in the corners (a circle): dice that lie outside it are moved to its edge.</summary>
+        private void KeepDiceInside()
+        {
+            for (int i = 0; i < _dice.Count; i++)
+            {
+                DieBody d = _dice[i];
+                if (d == null) continue;
+                Vector2 p = Local2(d), inside = Clamp(p, Footprint(d));
+                if ((inside - p).sqrMagnitude > 1e-4f) d.ShiftTo(transform.TransformPoint(new Vector3(inside.x, 0f, inside.y)));
+            }
         }
 
         /// <summary>Outer width (x) and depth (y) of the tray, rails included.</summary>
@@ -219,7 +237,12 @@ namespace DiceThrower.Game
         {
             Vector2 half = Extent * 0.5f - Vector2.one * config.randomSpawnInset;
             Vector2 p;
-            switch (UnityEngine.Random.Range(0, 4))
+            if (round)
+            {
+                float angle = UnityEngine.Random.Range(0f, Mathf.PI * 2f);
+                p = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * half.x;
+            }
+            else switch (UnityEngine.Random.Range(0, 4))
             {
                 case 0: p = new Vector2(UnityEngine.Random.Range(-half.x, half.x), -half.y); break;
                 case 1: p = new Vector2(UnityEngine.Random.Range(-half.x, half.x), half.y); break;
@@ -335,6 +358,7 @@ namespace DiceThrower.Game
         private Vector2 Clamp(Vector2 p, float r)
         {
             Vector2 half = Extent * 0.5f - Vector2.one * (config.placeEdgeInset + r);
+            if (round) return Vector2.ClampMagnitude(p, Mathf.Max(0f, half.x));
             return new Vector2(Mathf.Clamp(p.x, -half.x, half.x), Mathf.Clamp(p.y, -half.y, half.y));
         }
 
@@ -346,7 +370,9 @@ namespace DiceThrower.Game
             float bestRoom = float.MinValue;
             for (int attempt = 0; attempt < Mathf.Max(1, config.placeAttempts); attempt++)
             {
-                var p = new Vector2(UnityEngine.Random.Range(-half.x, half.x), UnityEngine.Random.Range(-half.y, half.y));
+                Vector2 p = round
+                    ? UnityEngine.Random.insideUnitCircle * Mathf.Max(0f, half.x)
+                    : new Vector2(UnityEngine.Random.Range(-half.x, half.x), UnityEngine.Random.Range(-half.y, half.y));
                 float room = float.MaxValue; // smallest clearance to any other die (negative = overlap)
                 for (int i = 0; i < _dice.Count; i++)
                 {
