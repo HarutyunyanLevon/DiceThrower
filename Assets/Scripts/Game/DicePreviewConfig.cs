@@ -15,6 +15,14 @@ namespace DiceThrower.Game
         [Tooltip("Degrees per second the die turns around the vertical axis.")]
         public float spinDegreesPerSecond = 40f;
 
+        [Header("Dice set grid (Dice tab cards)")]
+        [Tooltip("Pixels per side of a card's render texture. Smaller than the slots: the cards are small.")]
+        public int gridTextureSize = 160;
+        [Tooltip("Cards that are redrawn per frame (only cards on screen are drawn, in turn). Lower = cheaper, choppier spin.")]
+        public int gridRendersPerFrame = 4;
+        [Tooltip("Offset of the cards' stage from Stage Position, so the card camera and the slot camera never see each other's dice. Must be larger than the camera far plane (50).")]
+        public Vector3 gridStageOffset = new Vector3(100f, 0f, 0f);
+
         [Header("Camera")]
         [Tooltip("Where the preview dice stand. Far from the tray, so the tray camera and the preview camera never see each other's dice.")]
         public Vector3 stagePosition = new Vector3(0f, 500f, 0f);
@@ -23,6 +31,14 @@ namespace DiceThrower.Game
         [Range(1f, 2f)] public float framePadding = 1.12f;
         [Tooltip("MSAA samples of the render texture (1, 2, 4 or 8) for smooth edges.")]
         public int antiAliasing = 4;
+
+        [Header("Nat 20 / nat 1 preview (Dice tab card buttons)")]
+        [Tooltip("Seconds an effect plays on a card before the die goes back to normal.")]
+        public float effectPreviewSeconds = 4f;
+        [Tooltip("Like Frame Padding, but while a rain cloud or rays are shown, so they fit in the picture.")]
+        [Range(1f, 4f)] public float effectFramePadding = 2.4f;
+        [Tooltip("The picture's centre moves up by this many die radii while the extras are shown (the die sits lower, the cloud above it).")]
+        public float effectLiftRadii = 0.7f;
 
         [Header("Pose")]
         [Tooltip("Each die is first turned to its classic silhouette (see DiePose), then tilted by these degrees (around x, around y) so it reads as 3D. Used for a kind that has no entry in Tilts.")]

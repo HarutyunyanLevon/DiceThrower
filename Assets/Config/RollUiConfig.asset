@@ -15,26 +15,19 @@ MonoBehaviour:
   sets:
   - caption: ATTACK
     rowClass: dice-row--atk
-    skin: {fileID: 11400000, guid: 5b3e78690fa7c8846b2a3db8d670f447, type: 2}
   - caption: DAMAGE
     rowClass: dice-row--dmg
-    skin: {fileID: 11400000, guid: 56a0e57c335d96b449f04b71936df3b9, type: 2}
   targetFrameRate: 60
   slideThresholdPx: 10
   countPxPerStep: 24
   modifierPxPerStep: 14
   sliderTrackPad: 22
+  longPressSeconds: 0.5
   toastSeconds: 1.6
   badgeFlashSeconds: 0.35
   clearText: Clear
-  saveText: Save
-  savePendingToast: Presets arrive with the data milestone
+  saveText: Save Preset
   limitTotalFormat: 'Limit reached: {0} dice per set'
   limitTypeFormat: 'Limit reached: {0} x {1}'
-  rangeCaptionFormat: '{0}  -  {1} to {2}'
-  otherTabNotes:
-  - 'Presets arrive with the data milestone: saved setups, pinned chips on this screen.'
-  - 'History arrives with the data milestone: your last 100 throws, tap one to rethrow
-    it.'
-  - 'Settings arrive with the data milestone: theme, usage window, dice limits, sound
-    and haptics.'
+  captionRangeFormat: '{0}: {1} - {2}'
+  breakdownMaxChars: 44

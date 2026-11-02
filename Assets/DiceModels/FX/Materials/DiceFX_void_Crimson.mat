@@ -1,0 +1,75 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: DiceFX_void_Crimson
+  m_Shader: {fileID: 4800000, guid: 484a0277a4951de428b7703ed17db9a0, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _NoiseMap:
+        m_Texture: {fileID: 2800000, guid: 84061e8595a35bf4db1cbe39cc7b5dd5, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NumeralMap:
+        m_Texture: {fileID: 2800000, guid: 197c81d955486094f83a4ed2ab60ec70, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _Energy: 0
+    - _EnergyGlow: 1.2
+    - _FadeDim: 0.6
+    - _FadeEdge: 0.08
+    - _FadeEdgeStrength: 2.5
+    - _FadeMax: 0.9
+    - _FadeScale: 1.6
+    - _FlareRim: 1.5
+    - _FlareStrength: 2.5
+    - _FlareWidth: 0.12
+    - _Flash: 0
+    - _FresnelPower: 4
+    - _Gloom: 0
+    - _Highlight: 0
+    - _LineStrength: 0.6
+    - _LineWidth: 0.045
+    - _Metallic: 0.3
+    - _MistAmount: 0.25
+    - _NoiseScale: 1
+    - _NumeralBevel: 0.22
+    - _NumeralGlow: 1.2
+    - _NumeralHalo: 0.3
+    - _NumeralMetal: 0.9
+    - _NumeralSmoothness: 0.6
+    - _NumeralThick: 0.07
+    - _Parallax: 0.7
+    - _PulseAmount: 0.35
+    - _PulseSpeed: 1.2
+    - _RimGlow: 0.8
+    - _Seed: 0
+    - _Smoothness: 0.9
+    m_Colors:
+    - _FlareColor: {r: 1, g: 0.8, b: 0.7, a: 1}
+    - _MistColor: {r: 0.4, g: 0.04, b: 0.08, a: 1}
+    - _NumeralColor: {r: 1, g: 0.75, b: 0.6, a: 1}
+    - _RiftColor: {r: 1, g: 0.3, b: 0.25, a: 1}
+    - _RimColor: {r: 1, g: 0.15, b: 0.2, a: 1}
+    - _VoidColor: {r: 0.02, g: 0.012, b: 0.04, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

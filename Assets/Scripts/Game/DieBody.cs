@@ -32,6 +32,7 @@ namespace DiceThrower.Game
         private int[] _faceValue;   // non-d4: value printed on each face (what the die shows when that face is on top)
         private int[] _vertexLabel; // d4: number at each vertex
         private Rigidbody _rb;
+        private DieFxDriver _fx;       // only dice with a DiceFX shader material
 
         private float _age;
         private float _stillTime;
@@ -69,6 +70,7 @@ namespace DiceThrower.Game
             die.GetComponent<MeshFilter>().sharedMesh = die._mesh;
             die.GetComponent<MeshRenderer>().sharedMaterial = visual.Material;
             die.GetComponent<MeshCollider>().sharedMesh = visual.CollisionMesh;
+            die._fx = DieFxDriver.AttachIfFx(die, visual.Material, skin); // only dice whose material is a DiceFX shader get the driver
 
             die.InitLabels();
             return die;
@@ -165,6 +167,16 @@ namespace DiceThrower.Game
             _stillTime = 0f;
             _nudges = 0;
             Resting = false;
+            SetNatEffect(DieNatEffect.None); // a new throw ends the nat 20 / nat 1 effect
+        }
+
+        /// <summary>
+        /// Shows the nat 20 / nat 1 effect of the die's dice set (nothing for a set without one). The tray turns it on for a d20 that lies
+        /// showing 20 or 1, once every die is still; a new throw turns it off.
+        /// </summary>
+        public void SetNatEffect(DieNatEffect effect)
+        {
+            if (_fx != null) _fx.SetEffect(effect);
         }
 
         /// <summary>Call every frame while rolling. True once the die has come to rest.</summary>

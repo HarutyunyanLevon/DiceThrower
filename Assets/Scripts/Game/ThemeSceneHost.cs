@@ -11,6 +11,8 @@ namespace DiceThrower.Game
     /// </summary>
     public sealed class ThemeSceneHost : MonoBehaviour
     {
+        private static readonly int DarkGlowId = Shader.PropertyToID("_DiceFxDark");
+
         private DiceTray _tray;
         private Camera _cam;
         private Light _sun;
@@ -53,6 +55,7 @@ namespace DiceThrower.Game
                 _sun.intensity = _instance.LightIntensity;
                 _sun.transform.rotation = Quaternion.Euler(_instance.LightEuler);
             }
+            Shader.SetGlobalFloat(DarkGlowId, _instance.DarkGlow ? 1f : 0f);
             if (_cam != null) _cam.backgroundColor = _instance.CameraBackground;
             RenderSettings.ambientMode = AmbientMode.Flat;
             RenderSettings.ambientLight = _instance.AmbientColor;

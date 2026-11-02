@@ -59,6 +59,58 @@ MonoBehaviour:
     skin: {fileID: 11400000, guid: 008f11c1bae340c4eb947f990614e7ca, type: 2}
   - name: Pixel Amethyst
     skin: {fileID: 11400000, guid: b3d8760408ed50e45886b9c630ea5b67, type: 2}
+  - name: Mercury Silver
+    skin: {fileID: 11400000, guid: aa4b8fd70d463a4489d15ec0ef4ccfe7, type: 2}
+  - name: Mercury Gold
+    skin: {fileID: 11400000, guid: d941dbc6744b7b841996aa6d17746efb, type: 2}
+  - name: Mercury Gunmetal
+    skin: {fileID: 11400000, guid: 179137e68592162479c47ec61e846c29, type: 2}
+  - name: Prismatic Clear
+    skin: {fileID: 11400000, guid: 5a20463a03643f0469de3e9e47364ff5, type: 2}
+  - name: Lava Ember
+    skin: {fileID: 11400000, guid: 7212a0ee190a2bd49a8e39c0c1f7ead1, type: 2}
+  - name: Prismatic Dichroic
+    skin: {fileID: 11400000, guid: e522d2688c37ecd478728b2d8db31f79, type: 2}
+  - name: Cosmic Nebula
+    skin: {fileID: 11400000, guid: 8a48d18f433cebb40ae3f5f428a4401d, type: 2}
+  - name: Cosmic Aurora
+    skin: {fileID: 11400000, guid: 992a11dbc383f844dae7f4892ad3b2f7, type: 2}
+  - name: Cosmic Nova
+    skin: {fileID: 11400000, guid: 2262f57d4c8c0414f91acd7dadae324d, type: 2}
+  - name: Frost Glacier
+    skin: {fileID: 11400000, guid: 752b2938c7502b04ba12f07764ec9469, type: 2}
+  - name: Frost Rime
+    skin: {fileID: 11400000, guid: f603228c1be9f6f4ea6a23e37b9cb608, type: 2}
+  - name: Frost Abyss
+    skin: {fileID: 11400000, guid: 84d3ab36230112e4c8ce566c726b1dc8, type: 2}
+  - name: Void Amethyst
+    skin: {fileID: 11400000, guid: ae4cd57dcfac7e340820a8d502ffdc8d, type: 2}
+  - name: Void Eclipse
+    skin: {fileID: 11400000, guid: 05106d77d4b8fb6438a434c428e57e3d, type: 2}
+  - name: Void Crimson
+    skin: {fileID: 11400000, guid: 5a375361f94730a4a9ef8fae4bfcaab6, type: 2}
+  - name: Orange Jelly
+    skin: {fileID: 11400000, guid: fdc80efb474a61a41b23c78696049fbc, type: 2}
+  - name: Amethyst Tarot
+    skin: {fileID: 11400000, guid: fde935b1a30413a44ac07c9437d66812, type: 2}
+  - name: Moss Agate
+    skin: {fileID: 11400000, guid: 29abc973ac901534482a29bb6bc67b12, type: 2}
+  - name: Resin Twilight Tourmaline
+    skin: {fileID: 11400000, guid: f7b99723da2aee04a84c77d60be71ad4, type: 2}
+  - name: Super Seven Agate
+    skin: {fileID: 11400000, guid: 96cff8d289c276941b4ec461f19007a1, type: 2}
+  - name: Yellow Tiger's Eye
+    skin: {fileID: 11400000, guid: 6abdb901cf57063469be9c4189809807, type: 2}
+  - name: Black Rutilated Quartz
+    skin: {fileID: 11400000, guid: 073ab24df8804a345a23308c7eb36784, type: 2}
+  - name: Indian Agate
+    skin: {fileID: 11400000, guid: 7041c57e7c724774d951307e5ce2a3b0, type: 2}
+  - name: Beholder Scarred
+    skin: {fileID: 11400000, guid: a259f8d3544f24d4f9c136bfc148e142, type: 2}
+  - name: Beholder Goat
+    skin: {fileID: 11400000, guid: b6bdd8126dbbdcf4992e519716bda993, type: 2}
+  - name: Beholder Tiger
+    skin: {fileID: 11400000, guid: 85a11605ce9cd0041b1dff34157b8936, type: 2}
   themes:
   - name: Dvarven Tavern
     sheet: {fileID: 7433441132597879392, guid: 0e7d2a22b0a54e040bf365061ed31ac9, type: 3}
@@ -97,6 +149,8 @@ MonoBehaviour:
   presetSavedFormat: Saved "{0}"
   historyClearedToast: History cleared
   diceSetChangedToast: The new dice apply from the next throw
+  nat20ChipText: 20
+  nat1ChipText: 1
   diceSlotFormat: '{0} DICE SET'
   useDiceSetFormat: Use for {0}
   defaultPresetNameFormat: Preset {0}

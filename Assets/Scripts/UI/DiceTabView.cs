@@ -29,8 +29,15 @@ namespace DiceThrower.UI
         private readonly VisualElement[] _useButton = new VisualElement[RollSession.SetCount];
         private readonly List<VisualElement> _cards = new List<VisualElement>();
         private readonly List<Label> _tags = new List<Label>();
+        private readonly List<VisualElement> _cardPicture = new List<VisualElement>();
+        private readonly List<bool> _cardLive = new List<bool>(); // the card shows a live die (else its d20 icon)
+        private readonly List<float> _effectEnd = new List<float>(); // Time.unscaledTime at which a card's previewed effect stops, 0 = none
+        private bool[] _drawn;           // scratch: cards already drawn this frame
 
-        private DicePreviewRig _rig;
+        private ScrollView _grid;
+        private DicePreviewRig _rig;     // the two slots
+        private DicePreviewRig _gridRig; // one die per card
+        private int _gridCursor;         // where the next round of card redraws starts
         private bool _visible;
         private int _selected = -1; // the card that is tapped, or -1
 
@@ -69,6 +76,7 @@ namespace DiceThrower.UI
 
         private void BuildCards(ScrollView grid)
         {
+            _grid = grid;
             for (int i = 0; i < _cfg.diceSets.Length; i++)
             {
                 int index = i;
@@ -84,13 +92,51 @@ namespace DiceThrower.UI
                 Label tag = UiFactory.Label("", "dice-card__tag");
                 tag.style.display = DisplayStyle.None;
                 body.Add(tag);
+                AddEffectChips(body, index);
 
                 card.Add(body);
                 ListTap.Attach(card, () => Select(index), _ui.slideThresholdPx, false);
                 grid.Add(card);
                 _cards.Add(card);
                 _tags.Add(tag);
+                _cardPicture.Add(picture);
+                _cardLive.Add(false);
+                _effectEnd.Add(0f);
             }
+            _drawn = new bool[_cards.Count];
+        }
+
+        /// <summary>Two small chips in the card's corner (nat 20, nat 1) for a set that has those effects. Tapping one plays it on the card's die.</summary>
+        private void AddEffectChips(VisualElement body, int index)
+        {
+            DiceFxEffects effects = _cfg.SkinOf(index) != null ? _cfg.SkinOf(index).Effects : null;
+            if (effects == null || (!effects.hasNat20 && !effects.hasNat1)) return;
+
+            VisualElement row = new VisualElement();
+            row.AddToClassList("dice-card__fx");
+            if (effects.hasNat20) row.Add(EffectChip(index, DieNatEffect.Nat20, _cfg.nat20ChipText, "dice-fx-chip--nat20"));
+            if (effects.hasNat1) row.Add(EffectChip(index, DieNatEffect.Nat1, _cfg.nat1ChipText, "dice-fx-chip--nat1"));
+            body.Add(row);
+        }
+
+        private VisualElement EffectChip(int index, DieNatEffect effect, string text, string styleClass)
+        {
+            VisualElement chip = new VisualElement();
+            chip.AddToClassList("dice-fx-chip");
+            chip.AddToClassList(styleClass);
+            chip.Add(UiFactory.Label(text, "dice-fx-chip__text"));
+            ListTap.Attach(chip, () => PlayEffect(index, effect), _ui.slideThresholdPx, true); // consume: the card underneath is not selected
+            return chip;
+        }
+
+        /// <summary>Plays a nat 20 / nat 1 effect on a card's die; it stops by itself after the config's preview time.</summary>
+        private void PlayEffect(int index, DieNatEffect effect)
+        {
+            if (_gridRig == null || !_cardLive[index]) return;
+            DieFxDriver fx = _gridRig.FxOf(index);
+            if (fx == null) return;
+            fx.SetEffect(effect);
+            _effectEnd[index] = Time.unscaledTime + _preview.effectPreviewSeconds;
         }
 
         private void BuildButtons(VisualElement bar)
@@ -154,19 +200,86 @@ namespace DiceThrower.UI
             _visible = visible;
             if (visible && _rig == null && _preview != null)
                 _rig = new DicePreviewRig(_preview, RollSession.SetCount, _preview.textureSize, false);
+            if (visible && _gridRig == null && _preview != null) BuildGridDice();
         }
 
         public void Tick(float deltaSeconds)
         {
-            if (!_visible || _rig == null) return;
-            _rig.Spin(deltaSeconds);
-            for (int s = 0; s < RollSession.SetCount; s++) _rig.Render(s);
+            if (!_visible) return;
+            if (_rig != null)
+            {
+                _rig.Spin(deltaSeconds);
+                for (int s = 0; s < RollSession.SetCount; s++) _rig.Render(s);
+            }
+            if (_gridRig != null) TickGrid(deltaSeconds);
         }
 
         public void Dispose()
         {
             if (_rig != null) _rig.Dispose();
             _rig = null;
+            if (_gridRig != null) _gridRig.Dispose();
+            _gridRig = null;
+        }
+
+        // ------------------------------------------------------------------ the dice on the cards
+
+        /// <summary>One live d20 per card, like the slots above. A set without a model keeps its flat d20 icon.</summary>
+        private void BuildGridDice()
+        {
+            _gridRig = new DicePreviewRig(_preview, _cards.Count, _preview.gridTextureSize, false, _preview.gridStageOffset);
+            for (int i = 0; i < _cards.Count; i++)
+            {
+                if (!_gridRig.SetDie(i, _cfg.SkinOf(i), DieKind.D20)) continue;
+                VisualElement picture = _cardPicture[i];
+                picture.Clear();
+                picture.style.backgroundImage = Background.FromRenderTexture(_gridRig.TextureOf(i));
+                _cardLive[i] = true;
+            }
+        }
+
+        /// <summary>
+        /// All dice turn together, but only the cards inside the scroll view are drawn, a few per frame in turn
+        /// (a card that is not drawn keeps its last picture), so 24 sets cost no more than a screenful.
+        /// </summary>
+        private void TickGrid(float deltaSeconds)
+        {
+            _gridRig.Spin(deltaSeconds);
+
+            // previewed effects end by themselves
+            float now = Time.unscaledTime;
+            for (int i = 0; i < _cards.Count; i++)
+            {
+                if (_effectEnd[i] <= 0f || now < _effectEnd[i]) continue;
+                _effectEnd[i] = 0f;
+                DieFxDriver ended = _gridRig.FxOf(i);
+                if (ended != null) ended.SetEffect(DieNatEffect.None);
+            }
+            _gridRig.TickEffects(deltaSeconds);
+
+            Rect view = _grid.worldBound;
+            int count = _cards.Count;
+
+            // a card that plays an effect is drawn every frame (its particles only move while it is drawn); it does not use the budget
+            for (int i = 0; i < count; i++)
+            {
+                DieFxDriver fx = _cardLive[i] ? _gridRig.FxOf(i) : null;
+                _drawn[i] = fx != null && fx.Busy && _cards[i].worldBound.Overlaps(view);
+                if (_drawn[i]) _gridRig.Render(i);
+            }
+
+            int budget = Mathf.Max(1, _preview.gridRendersPerFrame);
+            int start = _gridCursor;
+            int last = -1;
+            for (int step = 0; step < count && budget > 0; step++)
+            {
+                int i = (start + step) % count;
+                if (_drawn[i] || !_cardLive[i] || !_cards[i].worldBound.Overlaps(view)) continue;
+                _gridRig.Render(i);
+                last = i;
+                budget--;
+            }
+            if (last >= 0) _gridCursor = (last + 1) % count;
         }
 
         private void UpdatePicture(int rollSet)

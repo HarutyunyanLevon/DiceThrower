@@ -12,6 +12,7 @@ namespace DiceThrower.Game
         [SerializeField, Range(0f, 1f)] private float metallic;
         [SerializeField, Tooltip("Optional imported 3D dice. When set, the dice look like this model variant; Body and Ink then only colour the dice the model lacks (the d% tens die).")] private DiceModelSet model;
         [SerializeField, Tooltip("Colour variant of the model.")] private int variant;
+        [SerializeField, Tooltip("Optional nat 20 / nat 1 effects of this set (DiceFX shader sets). The Dice tab shows a preview button for each.")] private DiceFxEffects effects;
 
         public Color32 Body { get { return body; } }
         public Color32 Ink { get { return ink; } }
@@ -19,6 +20,7 @@ namespace DiceThrower.Game
         public float Metallic { get { return metallic; } }
         public DiceModelSet Model { get { return model; } }
         public int Variant { get { return variant; } }
+        public DiceFxEffects Effects { get { return effects; } }
 
         /// <summary>Cache key: dice visuals are shared between skins that look the same.</summary>
         public string Key

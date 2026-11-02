@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 419af16ad986e14408cbadd767c73950, type: 3}
+  m_Name: DiceModel_fx_jelly
+  m_EditorClassIdentifier: DiceThrower.Game::DiceThrower.Game.DiceModelSet
+  geometry: {fileID: 4900000, guid: 85d515ed8634c764ebe3d78f1a61bb9e, type: 3}
+  variants:
+  - name: Default
+    material: {fileID: 2100000, guid: b729037058bb39e4d85e24d34589aba7, type: 2}

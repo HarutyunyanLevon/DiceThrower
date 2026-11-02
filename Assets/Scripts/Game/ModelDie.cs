@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using DiceThrower.Core;
 
@@ -17,6 +18,13 @@ namespace DiceThrower.Game
         private readonly Vector2[] _uv;
         private readonly int[] _tris;
         private readonly bool _cornerMode;
+        private readonly List<Vector4> _faceInfo;
+        private readonly List<Vector4> _poly0 = new List<Vector4>();   // face polygon in the face plane, two corners per Vector4 (see DiceFX.hlsl)
+        private readonly List<Vector4> _poly1 = new List<Vector4>();
+        private readonly List<Vector4> _poly2 = new List<Vector4>();
+
+        /// <summary>Same direction the DiceFX vertex stage uses to build each face's plane axes (DiceFaceRef in DiceFXLib.hlsl).</summary>
+        private static readonly Vector3 FaceRef = new Vector3(0.3714f, 0.5571f, 0.7428f);
 
         public ModelDie(DieKind kind, DieModelJson json)
         {
@@ -64,6 +72,8 @@ namespace DiceThrower.Game
                 for (int j = 0; j < faceSize; j++) _normals[f * faceSize + j] = normal;
             }
 
+            _faceInfo = BuildFaceInfo(faceCount, faceSize, faceNormals);
+
             _uv = new Vector2[n];
             for (int i = 0; i < n; i++) _uv[i] = new Vector2(json.uv[i * 2], json.uv[i * 2 + 1]);
             _tris = (int[])json.tris.Clone();
@@ -101,6 +111,62 @@ namespace DiceThrower.Game
             return v;
         }
 
+        // ------------------------------------------------------------------ face data for the DiceFX shaders
+
+        /// <summary>
+        /// Per vertex (uv1): xy = the face centre in the face's plane axes, z = the face inradius (distance from the centre to the nearest edge), w = 0.
+        /// The axes are built exactly as the shader builds them from the face normal, so the shader can centre decorations and eyes on every face
+        /// (kites and triangles included) and size them to it.
+        /// </summary>
+        private List<Vector4> BuildFaceInfo(int faceCount, int faceSize, Vector3[] faceNormals)
+        {
+            var info = new List<Vector4>(faceCount * faceSize);
+            var flat = new Vector2[faceSize];
+            for (int f = 0; f < faceCount; f++)
+            {
+                Vector3 nrm = faceNormals[f];
+                Vector3 t = (Vector3.Cross(nrm, FaceRef) + new Vector3(1e-6f, 0f, 0f)).normalized;
+                Vector3 b = Vector3.Cross(nrm, t);
+
+                Vector2 centre = Vector2.zero;
+                for (int j = 0; j < faceSize; j++)
+                {
+                    Vector3 p = _pos[f * faceSize + j];
+                    flat[j] = new Vector2(Vector3.Dot(p, t), Vector3.Dot(p, b));
+                    centre += flat[j];
+                }
+                centre /= faceSize;
+
+                float inradius = float.MaxValue;
+                for (int j = 0; j < faceSize; j++)
+                {
+                    Vector2 a = flat[j], c = flat[(j + 1) % faceSize];
+                    Vector2 edge = c - a;
+                    float len = edge.magnitude;
+                    if (len < 1e-6f) continue;
+                    float dist = Mathf.Abs(edge.x * (centre.y - a.y) - edge.y * (centre.x - a.x)) / len;
+                    inradius = Mathf.Min(inradius, dist);
+                }
+                if (inradius == float.MaxValue) inradius = 0f;
+
+                var v = new Vector4(centre.x, centre.y, inradius, 0f);
+                // corner slots 0..4; a face with fewer corners repeats corner 0 (the shader skips zero-length edges)
+                Vector2 c0 = flat[0];
+                Vector2 Corner(int idx) { return idx < faceSize ? flat[idx] : c0; }
+                var p0 = new Vector4(Corner(0).x, Corner(0).y, Corner(1).x, Corner(1).y);
+                var p1 = new Vector4(Corner(2).x, Corner(2).y, Corner(3).x, Corner(3).y);
+                var p2 = new Vector4(Corner(4).x, Corner(4).y, 0f, 0f);
+                for (int j = 0; j < faceSize; j++)
+                {
+                    info.Add(v);
+                    _poly0.Add(p0);
+                    _poly1.Add(p1);
+                    _poly2.Add(p2);
+                }
+            }
+            return info;
+        }
+
         // ------------------------------------------------------------------ mesh
 
         /// <summary>A fresh mesh of this die in its base orientation (every die gets its own mesh instance).</summary>
@@ -110,6 +176,10 @@ namespace DiceThrower.Game
             mesh.vertices = (Vector3[])_pos.Clone();
             mesh.normals = (Vector3[])_normals.Clone();
             mesh.uv = _uv;
+            mesh.SetUVs(1, _faceInfo);
+            mesh.SetUVs(2, _poly0);
+            mesh.SetUVs(3, _poly1);
+            mesh.SetUVs(4, _poly2);
             mesh.triangles = _tris;
             mesh.RecalculateBounds();
             mesh.RecalculateTangents();

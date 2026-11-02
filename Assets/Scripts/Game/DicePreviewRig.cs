@@ -22,7 +22,10 @@ namespace DiceThrower.Game
             public DieKind Kind;
             public bool HasDie;
             public DiceSkin Skin;
+            public DieFxDriver Fx;   // only for a DiceFX shader die
         }
+
+        private static readonly int UiPreviewId = Shader.PropertyToID("_DiceFxUiPreview");
 
         private readonly DicePreviewConfig _cfg;
         private readonly GameObject _root;
@@ -32,11 +35,12 @@ namespace DiceThrower.Game
 
         /// <param name="textureSize">Pixels per side of every slot's render texture.</param>
         /// <param name="withLight">Adds a light of its own (the sprite tool, which cannot rely on the open scene). The live preview uses the scene's light.</param>
-        public DicePreviewRig(DicePreviewConfig cfg, int slotCount, int textureSize, bool withLight)
+        /// <param name="stageOffset">Moves this rig's stage away from the config's stage. Two rigs alive at once (the Dice tab's slots and its grid) need different stages, or each camera would see the other's dice.</param>
+        public DicePreviewRig(DicePreviewConfig cfg, int slotCount, int textureSize, bool withLight, Vector3 stageOffset = default(Vector3))
         {
             _cfg = cfg;
             _root = new GameObject("DicePreview") { hideFlags = HideFlags.HideAndDontSave };
-            _root.transform.position = cfg.stagePosition;
+            _root.transform.position = cfg.stagePosition + stageOffset;
 
             var cameraObject = new GameObject("Camera") { hideFlags = HideFlags.HideAndDontSave };
             cameraObject.transform.SetParent(_root.transform, false);
@@ -93,13 +97,17 @@ namespace DiceThrower.Game
             s.Filter.sharedMesh = null;
             s.HasDie = false;
             s.Skin = null;
+            if (s.Fx != null) s.Fx.Unbind();
+            s.Fx = null;
 
             ModelDie solid = skin != null && skin.Model != null ? skin.Model.Solid(kind) : null;
             if (solid == null) return false;
 
             s.Mesh = solid.NewMesh();
             s.Filter.sharedMesh = s.Mesh;
-            s.Renderer.sharedMaterial = skin.Model.MaterialOf(skin.Variant);
+            Material material = skin.Model.MaterialOf(skin.Variant);
+            s.Renderer.sharedMaterial = material;
+            s.Fx = DieFxDriver.BindPreview(s.Object, s.Renderer, material, solid.Shape.Radius, skin.Effects, _root.transform, _camera);
             s.Pose = DiePose.Still(solid.Shape, _cfg.TiltOf(kind));
             s.Kind = kind;
             s.Skin = skin;
@@ -113,6 +121,21 @@ namespace DiceThrower.Game
             _yaw = Mathf.Repeat(_yaw + deltaSeconds * _cfg.spinDegreesPerSecond, 360f);
         }
 
+        /// <summary>The effect driver of a slot's die (null for a plain die): play a nat 20 / nat 1 effect with SetEffect.</summary>
+        public DieFxDriver FxOf(int slot)
+        {
+            return _slots[slot].Fx;
+        }
+
+        /// <summary>Advances the shader dice's fades. Call every frame, also for slots that are not drawn this frame.</summary>
+        public void TickEffects(float deltaSeconds)
+        {
+            for (int i = 0; i < _slots.Length; i++)
+            {
+                if (_slots[i].Fx != null) _slots[i].Fx.Tick(deltaSeconds);
+            }
+        }
+
         /// <summary>Draws the slot's die into its texture (cleared to transparent when the slot is empty).</summary>
         public void Render(int slot)
         {
@@ -122,13 +145,19 @@ namespace DiceThrower.Game
                 Slot s = _slots[i];
                 s.Object.SetActive(i == slot && s.HasDie);
                 if (s.HasDie) s.Object.transform.rotation = Quaternion.Euler(0f, _yaw, 0f) * s.Pose;
+                if (s.Fx != null) s.Fx.ShowExtras(i == slot && s.HasDie); // the extras (rays, cloud) of the other slots stay hidden
             }
 
+            // while a rain cloud / rays are out, the picture is framed wider and lifted so they fit
+            bool extras = target.Fx != null && target.Fx.ExtrasVisible;
             float radius = target.HasDie ? DieShape.RadiusOf(target.Kind) : 1f;
-            float distance = radius * _cfg.framePadding / Mathf.Sin(_cfg.fieldOfView * 0.5f * Mathf.Deg2Rad);
-            _camera.transform.SetPositionAndRotation(_root.transform.position + Vector3.back * distance, Quaternion.identity); // looks along +z at the die
+            float distance = radius * (extras ? _cfg.effectFramePadding : _cfg.framePadding) / Mathf.Sin(_cfg.fieldOfView * 0.5f * Mathf.Deg2Rad);
+            Vector3 lift = extras ? Vector3.up * (radius * _cfg.effectLiftRadii) : Vector3.zero;
+            _camera.transform.SetPositionAndRotation(_root.transform.position + lift + Vector3.back * distance, Quaternion.identity); // looks along +z at the die
             _camera.targetTexture = target.Texture;
+            Shader.SetGlobalFloat(UiPreviewId, 1f); // the additive rays then write straight-alpha colour (see DiceFX_Rays)
             _camera.Render();
+            Shader.SetGlobalFloat(UiPreviewId, 0f);
             _camera.targetTexture = null;
         }
 

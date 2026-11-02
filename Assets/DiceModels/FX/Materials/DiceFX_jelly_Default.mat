@@ -1,0 +1,79 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: DiceFX_jelly_Default
+  m_Shader: {fileID: 4800000, guid: ed91b1f7809b29f42a0040cb5b93759b, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _EnvMap:
+        m_Texture: {fileID: 8900000, guid: a1e30fad8565656429722acfe4354825, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NoiseMap:
+        m_Texture: {fileID: 2800000, guid: 84061e8595a35bf4db1cbe39cc7b5dd5, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NumeralMap:
+        m_Texture: {fileID: 2800000, guid: 197c81d955486094f83a4ed2ab60ec70, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _BevelTilt: 1
+    - _BevelWidth: 0.35
+    - _Energy: 0
+    - _EngraveDepth: 1.6
+    - _EnvStrength: 0.55
+    - _Flash: 0
+    - _FresnelPower: 2.5
+    - _Gloom: 0
+    - _Grain: 0.05
+    - _Highlight: 0
+    - _Metallic: 0
+    - _NoiseScale: 1
+    - _NumeralBevel: 0.22
+    - _NumeralGlow: 0.9
+    - _NumeralHalo: 0.3
+    - _NumeralMetal: 0.5
+    - _NumeralSmoothness: 0.6
+    - _NumeralThick: 0.02
+    - _RimGlow: 0.15
+    - _Seed: 0
+    - _ShadeAmount: 0.8
+    - _Smoothness: 0.35
+    - _StripeScale: 0.55
+    - _StripeSoft: 0.4
+    - _StripeWarp: 0.3
+    - _Subsurface: 0.45
+    - _WobbleAmount: 0.09
+    - _WobbleIdle: 0.008
+    - _WobbleMoving: 0.03
+    - _WobbleSpeed: 22
+    - _WobbleWaves: 14
+    m_Colors:
+    - _DeepColor: {r: 1, g: 0.4, b: 0.04, a: 1}
+    - _LightColor: {r: 1, g: 0.68, b: 0.28, a: 1}
+    - _NumeralColor: {r: 1, g: 0.82, b: 0.4, a: 1}
+    - _RimColor: {r: 1, g: 0.55, b: 0.25, a: 1}
+    - _ShadeColor: {r: 0.95, g: 0.14, b: 0.03, a: 1}
+    - _StripeDir: {r: 1, g: 0.3, b: 0, a: 0}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

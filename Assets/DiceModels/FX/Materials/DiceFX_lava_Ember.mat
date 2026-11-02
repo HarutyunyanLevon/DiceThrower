@@ -1,0 +1,77 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: DiceFX_lava_Ember
+  m_Shader: {fileID: 4800000, guid: 93b6d562a02def547b083ea8eac646eb, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _NoiseMap:
+        m_Texture: {fileID: 2800000, guid: 84061e8595a35bf4db1cbe39cc7b5dd5, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NumeralMap:
+        m_Texture: {fileID: 2800000, guid: 197c81d955486094f83a4ed2ab60ec70, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _CharWidth: 0.12
+    - _CoreWidth: 0.3
+    - _Depth: 0.35
+    - _EmissionStrength: 1.5
+    - _Energy: 0
+    - _EnergyHeat: 0.3
+    - _Flash: 0
+    - _FlowSpeed: 0.045
+    - _FlowWarp: 0.5
+    - _Gloom: 0
+    - _HeatBase: 0.66
+    - _Highlight: 0
+    - _Metallic: 0
+    - _NoiseScale: 1.5
+    - _NumeralBevel: 0.22
+    - _NumeralGlow: 1.2
+    - _NumeralHalo: 0.3
+    - _NumeralMetal: 0.9
+    - _NumeralSmoothness: 0.6
+    - _NumeralThick: 0.07
+    - _PatchScale: 0.9
+    - _PulseAmount: 0.06
+    - _PulseSpeed: 1.3
+    - _Seed: 0
+    - _Smoothness: 0.35
+    - _Soft: 0.12
+    - _SpeckHigh: 0.3
+    - _SpeckLow: 0.17
+    - _Spill: 0.15
+    - _SpillWidth: 0.18
+    - _StoneLift: 0.35
+    - _ThresholdCold: 1.05
+    - _ThresholdHot: 0.4
+    m_Colors:
+    - _ColdColor: {r: 0.54999995, g: 0.04, b: 0, a: 1}
+    - _CoreColor: {r: 1, g: 0.9, b: 0.39999998, a: 1}
+    - _HotColor: {r: 1, g: 0.41999996, b: 0.04, a: 1}
+    - _NumeralColor: {r: 1, g: 0.84, b: 0.4, a: 1}
+    - _SpeckColor: {r: 0.03, g: 0.03, b: 0.035, a: 1}
+    - _StoneColor: {r: 0.85, g: 0.85, b: 0.9, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

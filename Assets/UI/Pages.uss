@@ -323,7 +323,7 @@
 }
 .dice-card__body {
     flex-grow: 1;
-    min-height: 112px;
+    min-height: 148px;
     padding: 8px 6px;
     align-items: center;
     background-color: var(--panel);
@@ -334,14 +334,15 @@
 .dice-card.pressed .dice-card__body { background-color: var(--btn-edge); }
 .dice-card--selected .dice-card__body { border-color: var(--accent); }
 .dice-card__picture {
-    width: 64px;
-    height: 64px;
+    width: 96px;
+    height: 96px;
     justify-content: center;
     align-items: center;
+    -unity-background-scale-mode: scale-to-fit;
 }
 .dice-card__picture .die-icon {
-    width: 60px;
-    height: 60px;
+    width: 88px;
+    height: 88px;
 }
 .dice-card__name {
     max-width: 100%;
@@ -366,6 +367,34 @@
 }
 .dice-card__tag.dice-row--atk { background-color: var(--atk); color: var(--atk-ink); }
 .dice-card__tag.dice-row--dmg { background-color: var(--dmg); color: var(--dmg-ink); }
+
+/* nat 20 / nat 1 effect chips, top-right corner of a card whose set has those effects */
+.dice-card__fx {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    flex-direction: row;
+}
+.dice-fx-chip {
+    min-width: 26px;
+    margin-left: 3px;
+    padding: 2px 6px;
+    align-items: center;
+    border-width: 1px;
+    border-radius: 9px;
+    background-color: var(--panel);
+    border-color: var(--panel-edge);
+}
+.dice-fx-chip__text {
+    font-size: 10px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+}
+.dice-fx-chip--nat20 { border-color: var(--accent); }
+.dice-fx-chip--nat20 .dice-fx-chip__text { color: var(--accent); }
+.dice-fx-chip--nat1 { border-color: var(--dmg); }
+.dice-fx-chip--nat1 .dice-fx-chip__text { color: var(--dmg); }
+.dice-fx-chip.pressed { background-color: var(--btn-edge); }
 
 /* the dN text is for the dice rows; the big pictures here need none */
 .dice-slot .die-icon__text,

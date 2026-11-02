@@ -81,6 +81,10 @@ namespace DiceThrower.UI
         public string diceSetChangedToast = "The new dice apply from the next throw";
 
         [Header("Dice tab")]
+        [Tooltip("Text of the small button that previews the nat 20 effect on a dice set card.")]
+        public string nat20ChipText = "20";
+        [Tooltip("Text of the small button that previews the nat 1 effect on a dice set card.")]
+        public string nat1ChipText = "1";
         [Tooltip("{0} = roll set caption, e.g. ATTACK")]
         public string diceSlotFormat = "{0} DICE SET";
         [Tooltip("{0} = roll set name, e.g. Attack")]

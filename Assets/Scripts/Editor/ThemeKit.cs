@@ -466,9 +466,11 @@ namespace DiceThrower.EditorTools
 
         /// <summary>Writes the surface marker, the rim height and the light, camera and ambient settings into the ThemeScene.</summary>
         public static void ConfigureScene(ThemeScene scene, Transform surface, float rimHeight, bool round,
-                                          Color lightColor, float lightIntensity, Vector3 lightEuler, Color cameraBackground, Color ambient)
+                                          Color lightColor, float lightIntensity, Vector3 lightEuler, Color cameraBackground, Color ambient,
+                                          bool darkGlow = false)
         {
             var so = new SerializedObject(scene);
+            so.FindProperty("darkGlow").boolValue = darkGlow;
             so.FindProperty("surface").objectReferenceValue = surface;
             so.FindProperty("rimHeight").floatValue = rimHeight;
             so.FindProperty("round").boolValue = round;

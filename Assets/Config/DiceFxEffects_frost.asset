@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29b15e20dbda87448a56d6245d6ac7c8, type: 3}
+  m_Name: DiceFxEffects_frost
+  m_EditorClassIdentifier: DiceThrower.Game::DiceThrower.Game.DiceFxEffects
+  hasNat20: 1
+  nat20Prefab: {fileID: 6301902696475245814, guid: 41b30b1d25f4ea5418c297152aec30a2, type: 3}
+  nat20Size: 3.4
+  nat20Height: 0
+  nat20Lateral: 0
+  hasNat1: 1
+  nat1Prefab: {fileID: 0}
+  nat1Size: 1.7
+  nat1Height: 1.9
+  nat1Lateral: 0.3

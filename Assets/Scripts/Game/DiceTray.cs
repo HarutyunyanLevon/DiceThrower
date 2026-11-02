@@ -268,6 +268,7 @@ namespace DiceThrower.Game
             if (_instantSettled)
             {
                 _instantSettled = false;
+                ApplyNatEffects();
                 if (Settled != null) Settled();
                 return;
             }
@@ -309,7 +310,29 @@ namespace DiceThrower.Game
         private void Finish()
         {
             _rolling = false;
+            ApplyNatEffects();
             if (Settled != null) Settled();
+        }
+
+        /// <summary>
+        /// Every die lies still: a d20 showing 20 or 1 plays its dice set's nat 20 / nat 1 effect (if the set has one) and keeps it
+        /// until the next throw. Any other die, and any other number, shows no effect.
+        /// </summary>
+        private void ApplyNatEffects()
+        {
+            for (int i = 0; i < _dice.Count; i++)
+            {
+                DieBody d = _dice[i];
+                if (d == null) continue;
+                DieNatEffect effect = DieNatEffect.None;
+                if (d.Kind == DieKind.D20)
+                {
+                    int value = d.ReadTopValue();
+                    if (value == 20) effect = DieNatEffect.Nat20;
+                    else if (value == 1) effect = DieNatEffect.Nat1;
+                }
+                d.SetNatEffect(effect);
+            }
         }
 
         // ------------------------------------------------------------------ setting dice by hand

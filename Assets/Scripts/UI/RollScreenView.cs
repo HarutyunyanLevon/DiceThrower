@@ -332,7 +332,7 @@ namespace DiceThrower.UI
                 ReadTray(); // dice were only removed: the result is what the dice left show
                 _recorder.Settled();
             }
-            Refresh();
+            Refresh();  
         }
 
         /// <summary>Physics: the result is what the dice in the tray show. The losing copy of an advantage / disadvantage throw leaves.</summary>

@@ -131,7 +131,7 @@ namespace DiceThrower.EditorTools
             lights.SetParent(root.transform, false);
             ThemeKit.PointLight(lights, "Glow", new Vector3(0f, GlowLightHeight, 0f), GlowLightColor, GlowLightIntensity, GlowLightRange, true);
 
-            ThemeKit.ConfigureScene(scene, surface, 0f, true, st.lightColor, st.lightIntensity, st.lightEuler, st.cameraBackground, st.ambientColor);
+            ThemeKit.ConfigureScene(scene, surface, 0f, true, st.lightColor, st.lightIntensity, st.lightEuler, st.cameraBackground, st.ambientColor, true); // a dark place: glow-in-the-dark dice (Beholder) glow here
             return root;
         }
 

@@ -27,6 +27,11 @@ namespace DiceThrower.Game
         [SerializeField] private Color cameraBackground = Color.black;
         [SerializeField] private Color ambientColor = new Color(0.2f, 0.2f, 0.2f);
 
+        [Header("Dice")]
+        [SerializeField, Tooltip("A dark place: glow-in-the-dark dice (the Beholder set) glow while this theme is shown.")]
+        private bool darkGlow;
+
+        public bool DarkGlow { get { return darkGlow; } }
         public Transform Surface { get { return surface; } }
         public float RimHeight { get { return rimHeight; } }
         public bool Round { get { return round; } }
